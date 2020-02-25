@@ -2,7 +2,6 @@ import React from "react"
 
 const Dashboard1 = () => {
 return (
-  <div>
     // {/* Content Wrapper. Contains page content */}
     <div className="content-wrapper">
       {/* Content Header (Page header) */}
@@ -858,8 +857,7 @@ return (
       </section>
       {/* /.content */}
     </div>
-    {/* /.content-wrapper */}
-  </div>
+    // {/* .content-wrapper */}
 );
 }
 

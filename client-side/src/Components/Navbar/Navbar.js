@@ -1,25 +1,27 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({match}) => {
+  console.log(match);
   return (
-    //   navbar 
+    //   navbar
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
       {/* Left navbar links */}
       <ul className="navbar-nav">
         <li className="nav-item">
-          <a className="nav-link" data-widget="pushmenu" href="#">
+          <Link to="/" className="nav-link" data-widget="pushmenu">
             <i className="fas fa-bars" />
-          </a>
+          </Link>
         </li>
         <li className="nav-item d-none d-sm-inline-block">
-          <a href="../../index3.html" className="nav-link">
+          <Link to="/dashboard1" className="nav-link">
             Home
-          </a>
+          </Link>
         </li>
         <li className="nav-item d-none d-sm-inline-block">
-          <a href="#" className="nav-link">
-            Contact
-          </a>
+          <Link to="/defaultpage" className="nav-link">
+            Default Main Page
+          </Link>
         </li>
       </ul>
       {/* SEARCH FORM */}
@@ -51,7 +53,7 @@ const Navbar = () => {
               {/* Message Start */}
               <div className="media">
                 <img
-                  src="../../dist/img/user1-128x128.jpg"
+                  src={require("../../dist/img/user1-128x128.jpg")}
                   alt="User Avatar"
                   className="img-size-50 mr-3 img-circle"
                 />
@@ -75,7 +77,7 @@ const Navbar = () => {
               {/* Message Start */}
               <div className="media">
                 <img
-                  src="../../dist/img/user8-128x128.jpg"
+                  src={require("../../dist/img/user8-128x128.jpg")}
                   alt="User Avatar"
                   className="img-size-50 img-circle mr-3"
                 />
@@ -99,7 +101,7 @@ const Navbar = () => {
               {/* Message Start */}
               <div className="media">
                 <img
-                  src="../../dist/img/user3-128x128.jpg"
+                  src={require("../../dist/img/user3-128x128.jpg")}
                   alt="User Avatar"
                   className="img-size-50 img-circle mr-3"
                 />
