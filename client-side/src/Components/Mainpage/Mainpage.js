@@ -22,7 +22,7 @@ const Mainpage = () => {
                 <li className="breadcrumb-item active">Fixed Layout</li>
               </ol>
             </div>
-          </div>
+          </div> 
         </div>
         {/* /.container-fluid */}
       </section>
