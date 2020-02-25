@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 const Sidebar = () => {
   return (
@@ -51,22 +52,22 @@ const Sidebar = () => {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="../../index.html" className="nav-link">
+                  <Link to="/dashboard1" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Dashboard v1</p>
-                  </a>
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <a href="../../index2.html" className="nav-link">
+                  <Link to="/dashboard2" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Dashboard v2</p>
-                  </a>
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <a href="../../index3.html" className="nav-link">
+                  <Link to="/dashboard3" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Dashboard v3</p>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </li>
