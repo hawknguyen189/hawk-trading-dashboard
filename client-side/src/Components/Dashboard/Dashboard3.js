@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
+import drawChartDash3 from "../Utils/DashboardDrawing/dashboard3";
+import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
+import Dashboard3Data from "./Data/Dashboard3Data";
 
 const Dashboard3 = () => {
+  //   useEffect(() => {
+  //     drawChartDash3();
+  //   });
   return (
     <div className="content-wrapper">
       {/* Content Header (Page header) */}
@@ -53,7 +59,12 @@ const Dashboard3 = () => {
                   </div>
                   {/* /.d-flex */}
                   <div className="position-relative mb-4">
-                    <canvas id="visitors-chart" height={200} />
+                    <DrawingChartJS
+                      type="line"
+                      data={Dashboard3Data[0].data}
+                      option={Dashboard3Data[0].option}
+                      height={200}
+                    ></DrawingChartJS>
                   </div>
                   <div className="d-flex flex-row justify-content-end">
                     <span className="mr-2">
@@ -212,7 +223,12 @@ const Dashboard3 = () => {
                   </div>
                   {/* /.d-flex */}
                   <div className="position-relative mb-4">
-                    <canvas id="sales-chart" height={200} />
+                    <DrawingChartJS
+                      type="bar"
+                      data={Dashboard3Data[1].data}
+                      option={Dashboard3Data[1].option}
+                      height={200}
+                    ></DrawingChartJS>
                   </div>
                   <div className="d-flex flex-row justify-content-end">
                     <span className="mr-2">

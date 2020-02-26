@@ -1,4 +1,6 @@
 import React from "react";
+import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
+import Dashboard2Data from "./Data/Dashboard2Data";
 
 const Dashboard2 = () => {
   return (
@@ -151,12 +153,13 @@ const Dashboard2 = () => {
                         <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
                       </p>
                       <div className="chart">
-                        {/* Sales Chart Canvas */}
-                        <canvas
-                          id="salesChart"
+                        {/* Sales Chart */}
+                        <DrawingChartJS
+                          type="line"
+                          data={Dashboard2Data[0].data}
+                          option={Dashboard2Data[0].option}
                           height={180}
-                          style={{ height: 180 }}
-                        />
+                        ></DrawingChartJS>
                       </div>
                       {/* /.chart-responsive */}
                     </div>
@@ -764,7 +767,7 @@ const Dashboard2 = () => {
                     </div>
                     {/* /.card-body */}
                     <div className="card-footer text-center">
-                      <a href="javascript::">View All Users</a>
+                      <a href="dangerouslySetInnerHTML">View All Users</a>
                     </div>
                     {/* /.card-footer */}
                   </div>
@@ -1033,7 +1036,12 @@ const Dashboard2 = () => {
                   <div className="row">
                     <div className="col-md-8">
                       <div className="chart-responsive">
-                        <canvas id="pieChart" height={150} />
+                        <DrawingChartJS
+                          type="doughnut"
+                          height={150}
+                          data={Dashboard2Data[1].data}
+                          option={Dashboard2Data[1].option}
+                        ></DrawingChartJS>
                       </div>
                       {/* ./chart-responsive */}
                     </div>
