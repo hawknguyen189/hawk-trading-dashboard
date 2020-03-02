@@ -1,4 +1,6 @@
 import React from "react"
+import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
+import Dashboard1Data from "./Data/Dashboard1Data";
 
 const Dashboard1 = () => {
 return (

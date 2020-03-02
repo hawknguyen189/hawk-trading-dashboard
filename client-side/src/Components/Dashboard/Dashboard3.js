@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import drawChartDash3 from "../Utils/DashboardDrawing/dashboard3";
 import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
 import Dashboard3Data from "./Data/Dashboard3Data";
 
