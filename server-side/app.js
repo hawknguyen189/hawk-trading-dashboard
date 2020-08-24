@@ -27,6 +27,24 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
+app.use("/binance", (req, res, next) => {
+  console.log("start new app use for bitcoin only");
+  next();
+});
+
+app.get("/url", (req, res, next) => {
+  console.log("here is the get response");
+  res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
+});
+
+app.post("/login", (req, res, next) => {
+  console.log(req.body);
+  var user_name = req.body.headers;
+  var password = req.body.method;
+  console.log("User name = " + user_name + ", password is " + password);
+  res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
+  // res.end("yes");
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

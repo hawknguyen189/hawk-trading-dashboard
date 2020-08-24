@@ -1,14 +1,14 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import Navbar from "./Components/Navbar/Navbar";
-import Sidebar from "./Components/Sidebar/Sidebar";
-import ControlSidebar from "./Components/Sidebar/ControlSidebar";
-import Mainpage from "./Components/Mainpage/Mainpage";
-import Footer from "./Components/Footer/Footer";
-import Dashboard1 from "./Components/Dashboard/Dashboard1";
-import Dashboard2 from "./Components/Dashboard/Dashboard2";
-import Dashboard3 from "./Components/Dashboard/Dashboard3";
+import Navbar from "./Containers/Navbar/Navbar";
+import Sidebar from "./Containers/Sidebar/Sidebar";
+import ControlSidebar from "./Containers/Sidebar/ControlSidebar";
+import Mainpage from "./Containers/Mainpage/Mainpage";
+import Footer from "./Containers/Footer/Footer";
+import Dashboard1 from "./Containers/Dashboard/Dashboard1";
+import Dashboard2 from "./Containers/Dashboard/Dashboard2";
+import Dashboard3 from "./Containers/Dashboard/Dashboard3";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 
 function App() {
