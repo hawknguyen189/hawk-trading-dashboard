@@ -1,13 +1,37 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import { UserAccount } from "../../Containers/Context/UserAccount";
 const ConnectPanel = () => {
+  const { balance, setBalance } = useContext(UserAccount);
+  useEffect(() => {
+    const callAccountBalance = async () => {
+      console.log("call account balance ")
+      const endpoint = "callaccountbalance";
+      try {
+        let response = await fetch(`/${endpoint}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          const jsonResponse = await response.json();
+          // const resultParse = JSON.parse(jsonResponse);
+          console.log("account balance ",jsonResponse);
+          setBalance(jsonResponse);
+        }
+      } catch (e) {
+        console.log("calling account balance error ", e);
+      }
+    };
+    // return () => {
+    callAccountBalance();
+  }, []);
   return (
-    <section className="col-lg-5 connectedSortable">
+    <section className="col-lg-4 connectedSortable">
       {/* Map card */}
       <div className="card bg-gradient-primary">
         <div className="card-header border-0">
           <h3 className="card-title">
             <i className="fas fa-map-marker-alt mr-1" />
-            Visitors
+            Account Summary
           </h3>
           {/* card tools */}
           <div className="card-tools">
@@ -32,7 +56,7 @@ const ConnectPanel = () => {
           {/* /.card-tools */}
         </div>
         <div className="card-body">
-          <div id="world-map" style={{ height: 250, width: "100%" }} />
+          <h6>Account Balance: </h6>
         </div>
         {/* /.card-body*/}
         <div className="card-footer bg-transparent">

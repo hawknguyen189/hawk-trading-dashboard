@@ -3,8 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-//add mongodb file
-require("./db");
+const Binance = require("node-binance-api");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -32,9 +31,49 @@ app.use("/binance", (req, res, next) => {
   next();
 });
 
-app.get("/url", (req, res, next) => {
+// setting up binance API
+// *****************************************
+const dotenv = require("dotenv");
+dotenv.config();
+const binance = new Binance().options({
+  APIKEY: process.env.BINANCE_API,
+  APISECRET: process.env.BINANCE_APISECRET,
+  useServerTime: true,
+});
+app.get("/callwatchlist", (req, res, next) => {
   console.log("here is the get response");
-  res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
+  // const checkAllPrice = async () => {
+  //   let response = await binance.prices();
+  //   console.info(`Price of BNB: ${response.BNBUSDT}`);
+  //   res.status("200").send(response);
+  // };
+  // checkPrice();
+  const checkAllVolume = async () => {
+    await binance.exchangeInfo(function (lim) {
+      console.log("here is your API limit ", lim);
+    });
+    await binance.prevDay(false, (error, prevDay) => {
+      // console.info(prevDay); // view all data
+      res.json(prevDay);
+    });
+    // console.info(response); // view all data
+  };
+  checkAllVolume();
+});
+app.get("/callaccountbalance", (req, res, next) => {
+  const checkAccountBalance = async () => {
+    await binance.useServerTime();
+    await binance.exchangeInfo(function (lim) {
+      console.log("here is your API limit inside account balance ", lim);
+    });
+    binance.balance((error, balances) => {
+      if (error) return console.error(error);
+      console.info("balances()", balances);
+      console.info("ETH balance: ", balances.ETH.available);
+      res.json(balances);
+    });
+  };
+  checkAccountBalance();
 });
 
 app.post("/login", (req, res, next) => {
@@ -45,13 +84,16 @@ app.post("/login", (req, res, next) => {
   res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
   // res.end("yes");
 });
+// *************************************
+// end binance api
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

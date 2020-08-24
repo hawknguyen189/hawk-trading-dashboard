@@ -1,35 +1,48 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { CoinContext } from "../../Containers/Context/CoinContext";
+import "../../Containers/Utils/style.scss";
 
 const MainSection = () => {
+  const { watchlist, setWatchlist } = useContext(CoinContext);
   useEffect(() => {
-    const CallBinanceApi = async () => {
-      console.log("inside call")
+    const callWathclist = async () => {
+      console.log("inside call");
+      const endpoint = "callwatchlist";
       try {
-        let response = await fetch("/url");
+        let response = await fetch(`/${endpoint}`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         } else {
           console.log("finish calling binance api");
-          console.log(response);
+          const jsonResponse = await response.json();
+          // const resultParse = JSON.parse(jsonResponse);
+          // console.log(jsonResponse);
+          const listUSDT = jsonResponse.filter((e) =>
+            e.symbol.includes("USDT", 1)
+          );
+          const descListUSDT = listUSDT.sort(
+            (a, b) => b.quoteVolume - a.quoteVolume
+          );
+          await setWatchlist(descListUSDT.slice(0, 10));
         }
       } catch (e) {
-        console.log(e);
+        console.log("calling binnance error ", e);
       }
     };
     // return () => {
-    CallBinanceApi();
+    callWathclist();
     // };
   }, []);
 
   return (
-    <section className="col-lg-7 connectedSortable">
+    <section className="col-lg-8 connectedSortable">
       {/* Custom tabs (Charts with tabs)*/}
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">
             <i className="fas fa-chart-pie mr-1" />
-            Binance Account Summary
+            Binance Watchlist
           </h3>
           <div className="card-tools">
             <ul className="nav nav-pills ml-auto">
@@ -39,12 +52,12 @@ const MainSection = () => {
                   href="#revenue-chart"
                   data-toggle="tab"
                 >
-                  Area
+                  USDT
                 </a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#sales-chart" data-toggle="tab">
-                  Donut
+                  BTC
                 </a>
               </li>
             </ul>
@@ -52,31 +65,64 @@ const MainSection = () => {
         </div>
         {/* /.card-header */}
         <div className="card-body">
-          <div className="tab-content p-0">
-            {/* Morris chart - Sales */}
-            <div
-              className="chart tab-pane active"
-              id="revenue-chart"
-              style={{ position: "relative", height: 300 }}
-            >
-              <canvas
-                id="revenue-chart-canvas"
-                height={300}
-                style={{ height: 300 }}
-              />
-            </div>
-            <div
-              className="chart tab-pane"
-              id="sales-chart"
-              style={{ position: "relative", height: 300 }}
-            >
-              <canvas
-                id="sales-chart-canvas"
-                height={300}
-                style={{ height: 300 }}
-              />
-            </div>
-          </div>
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Pair</th>
+                <th scope="col">Last Price</th>
+                <th scope="col">24h Change</th>
+                <th scope="col">24h High</th>
+                <th scope="col">24h Low</th>
+                <th scope="col">24h Volume</th>
+                <th scope="col">MA(5)</th>
+                <th scope="col">MA(30)</th>
+                <th scope="col">Decision</th>
+              </tr>
+            </thead>
+            <tbody>
+              {watchlist &&
+                watchlist.map((e, index) => {
+                  return (
+                    <tr key={index}>
+                      <th scope="row">{e.symbol}</th>
+                      <td>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(e.lastPrice)}
+                      </td>
+                      <td
+                        className={
+                          e.priceChangePercent > 0 ? "bullish" : "bearish"
+                        }
+                      >
+                        {new Intl.NumberFormat("en-US").format(
+                          e.priceChangePercent
+                        )}
+                      </td>
+                      <td>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(e.highPrice)}
+                      </td>
+                      <td>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(e.lowPrice)}
+                      </td>
+                      <td>
+                        {new Intl.NumberFormat("en-US").format(e.quoteVolume)}
+                      </td>
+                      <td>MA(5)</td>
+                      <td>MA(30)</td>
+                      <td>Analyzing</td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
         </div>
         {/* /.card-body */}
       </div>
