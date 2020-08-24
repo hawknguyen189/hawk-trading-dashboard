@@ -74,9 +74,9 @@ const MainSection = () => {
                 <th scope="col">24h High</th>
                 <th scope="col">24h Low</th>
                 <th scope="col">24h Volume</th>
-                <th scope="col">MA(5)</th>
-                <th scope="col">MA(30)</th>
-                <th scope="col">Decision</th>
+                <th scope="col">SMA</th>
+                <th scope="col">EMA</th>
+                <th scope="col">Keltner Channels</th>
               </tr>
             </thead>
             <tbody>
@@ -182,7 +182,7 @@ const MainSection = () => {
               <img
                 className="direct-chat-img"
                 src="dist/img/user1-128x128.jpg"
-                alt="message user image"
+                alt="message user"
               />
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">
@@ -205,7 +205,7 @@ const MainSection = () => {
               <img
                 className="direct-chat-img"
                 src="dist/img/user3-128x128.jpg"
-                alt="message user image"
+                alt="message user"
               />
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">You better believe it!</div>
@@ -226,7 +226,7 @@ const MainSection = () => {
               <img
                 className="direct-chat-img"
                 src="dist/img/user1-128x128.jpg"
-                alt="message user image"
+                alt="message user"
               />
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">
@@ -249,7 +249,7 @@ const MainSection = () => {
               <img
                 className="direct-chat-img"
                 src="dist/img/user3-128x128.jpg"
-                alt="message user image"
+                alt="message user"
               />
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">I would love to.</div>
@@ -266,6 +266,7 @@ const MainSection = () => {
                   <img
                     className="contacts-list-img"
                     src="dist/img/user1-128x128.jpg"
+                    alt="contact"
                   />
                   <div className="contacts-list-info">
                     <span className="contacts-list-name">
@@ -286,6 +287,7 @@ const MainSection = () => {
                 <a href="/">
                   <img
                     className="contacts-list-img"
+                    alt="contact"
                     src="dist/img/user7-128x128.jpg"
                   />
                   <div className="contacts-list-info">
@@ -307,6 +309,7 @@ const MainSection = () => {
                 <a href="/">
                   <img
                     className="contacts-list-img"
+                    alt="contact"
                     src="dist/img/user3-128x128.jpg"
                   />
                   <div className="contacts-list-info">
@@ -328,6 +331,7 @@ const MainSection = () => {
                 <a href="/">
                   <img
                     className="contacts-list-img"
+                    alt="contact"
                     src="dist/img/user5-128x128.jpg"
                   />
                   <div className="contacts-list-info">
@@ -349,6 +353,7 @@ const MainSection = () => {
                 <a href="/">
                   <img
                     className="contacts-list-img"
+                    alt="contact"
                     src="dist/img/user6-128x128.jpg"
                   />
                   <div className="contacts-list-info">
@@ -370,6 +375,7 @@ const MainSection = () => {
                 <a href="/">
                   <img
                     className="contacts-list-img"
+                    alt="contact"
                     src="dist/img/user8-128x128.jpg"
                   />
                   <div className="contacts-list-info">

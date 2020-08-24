@@ -1,10 +1,14 @@
 import React, { useContext, useEffect } from "react";
 import { UserAccount } from "../../Containers/Context/UserAccount";
+import { CoinContext } from "../../Containers/Context/CoinContext";
+
 const ConnectPanel = () => {
   const { balance, setBalance } = useContext(UserAccount);
+  const { coin, setCoin } = useContext(CoinContext);
+
   useEffect(() => {
     const callAccountBalance = async () => {
-      console.log("call account balance ")
+      console.log("call account balance ");
       const endpoint = "callaccountbalance";
       try {
         let response = await fetch(`/${endpoint}`);
@@ -14,8 +18,42 @@ const ConnectPanel = () => {
         } else {
           const jsonResponse = await response.json();
           // const resultParse = JSON.parse(jsonResponse);
-          console.log("account balance ",jsonResponse);
-          setBalance(jsonResponse);
+          let mainBalance = [];
+          for (let property in jsonResponse) {
+            // console.log(parseInt(jsonResponse[property]["onOrder"]));
+            if (
+              parseInt(jsonResponse[property]["available"]) > 0 ||
+              parseInt(jsonResponse[property]["onOrder"]) > 0
+            ) {
+              mainBalance.push({
+                symbol: property,
+                ...jsonResponse[property],
+              });
+            }
+          }
+          setBalance(mainBalance);
+        }
+      } catch (e) {
+        console.log("calling account balance error ", e);
+      }
+    };
+    const callCheckPrice = async () => {
+      const endpoint = "callcheckprice";
+      try {
+        let response = await fetch(`/${endpoint}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          const jsonResponse = await response.json();
+          // const resultParse = JSON.parse(jsonResponse);
+          // let allPrice = [];
+          // for (let property in jsonResponse) {
+          //   // console.log(parseInt(jsonResponse[property]["onOrder"]));
+          //   allPrice.push(property);
+          // }
+          // console.log("all price ", allPrice);
+          setCoin(jsonResponse);
         }
       } catch (e) {
         console.log("calling account balance error ", e);
@@ -23,11 +61,12 @@ const ConnectPanel = () => {
     };
     // return () => {
     callAccountBalance();
+    callCheckPrice();
   }, []);
   return (
     <section className="col-lg-4 connectedSortable">
       {/* Map card */}
-      <div className="card bg-gradient-primary">
+      <div className="card ">
         <div className="card-header border-0">
           <h3 className="card-title">
             <i className="fas fa-map-marker-alt mr-1" />
@@ -57,23 +96,70 @@ const ConnectPanel = () => {
         </div>
         <div className="card-body">
           <h6>Account Balance: </h6>
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Coin</th>
+                <th scope="col">Available</th>
+                <th scope="col">On-Order</th>
+                <th scope="col">USD Equivalent</th>
+              </tr>
+            </thead>
+            <tbody>
+              {balance &&
+                balance.map((e, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{e.symbol}</td>
+                      <td>
+                        {new Intl.NumberFormat("en-US").format(e.available)}
+                      </td>
+                      <td>
+                        {new Intl.NumberFormat("en-US").format(e.onOrder)}
+                      </td>
+                      <td>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(
+                          coin[`${e.symbol}USDT`] *
+                            (parseInt(e.available) + parseInt(e.onOrder))
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
         </div>
         {/* /.card-body*/}
         <div className="card-footer bg-transparent">
+          <h6>Favorite Coins</h6>
           <div className="row">
             <div className="col-4 text-center">
-              <div id="sparkline-1" />
-              <div className="text-white">Visitors</div>
+              <div className="">
+                IOTA{" "}
+                {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(coin[`IOTAUSDT`])}
+              </div>
             </div>
             {/* ./col */}
             <div className="col-4 text-center">
-              <div id="sparkline-2" />
-              <div className="text-white">Online</div>
+              SRM{" "}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(coin[`SRMUSDT`])}
             </div>
             {/* ./col */}
             <div className="col-4 text-center">
-              <div id="sparkline-3" />
-              <div className="text-white">Sales</div>
+              BAT{" "}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(coin[`BATUSDT`])}
             </div>
             {/* ./col */}
           </div>
@@ -86,7 +172,7 @@ const ConnectPanel = () => {
         <div className="card-header border-0">
           <h3 className="card-title">
             <i className="fas fa-th mr-1" />
-            Sales Graph
+            Chart Graph
           </h3>
           <div className="card-tools">
             <button

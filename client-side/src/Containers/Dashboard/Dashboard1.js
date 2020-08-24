@@ -1,11 +1,32 @@
-import React from "react"
-import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
-import Dashboard1Data from "./Data/Dashboard1Data";
-import ConnectPanel from "../../Conponents/ConnectBinance/ConnectPanel"
+import React, { useEffect } from "react";
+// import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
+// import Dashboard1Data from "./Data/Dashboard1Data";
+import ConnectPanel from "../../Conponents/ConnectBinance/ConnectPanel";
 import MainSection from "../../Conponents/ConnectBinance/MainSection";
+import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
 
 const Dashboard1 = () => {
-return (
+  useEffect(() => {
+    const callKlineData = async () => {
+      const endpoint = "callklinedata";
+      try {
+        let response = await fetch(`/${endpoint}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          const jsonResponse = await response.json();
+          // const resultParse = JSON.parse(jsonResponse);
+          
+          console.log("kline ", jsonResponse);
+        }
+      } catch (e) {
+        console.log("calling account balance error ", e);
+      }
+    };
+    callKlineData();
+  }, []);
+  return (
     // {/* Content Wrapper. Contains page content */}
     <div className="content-wrapper">
       {/* Content Header (Page header) */}
@@ -36,72 +57,26 @@ return (
         <div className="container-fluid">
           {/* Small boxes (Stat box) */}
           <div className="row">
-            <div className="col-lg-3 col-6">
-              {/* small box */}
-              <div className="small-box bg-info">
-                <div className="inner">
-                  <h3>150</h3>
-                  <p>New Orders</p>
-                </div>
-                <div className="icon">
-                  <i className="ion ion-bag" />
-                </div>
-                <a href="/" className="small-box-footer">
-                  More info <i className="fas fa-arrow-circle-right" />
-                </a>
-              </div>
-            </div>
-            {/* ./col */}
-            <div className="col-lg-3 col-6">
-              {/* small box */}
-              <div className="small-box bg-success">
-                <div className="inner">
-                  <h3>
-                    53<sup style={{ fontSize: 20 }}>%</sup>
-                  </h3>
-                  <p>Bounce Rate</p>
-                </div>
-                <div className="icon">
-                  <i className="ion ion-stats-bars" />
-                </div>
-                <a href="/" className="small-box-footer">
-                  More info <i className="fas fa-arrow-circle-right" />
-                </a>
-              </div>
-            </div>
-            {/* ./col */}
-            <div className="col-lg-3 col-6">
-              {/* small box */}
-              <div className="small-box bg-warning">
-                <div className="inner">
-                  <h3>44</h3>
-                  <p>User Registrations</p>
-                </div>
-                <div className="icon">
-                  <i className="ion ion-person-add" />
-                </div>
-                <a href="/" className="small-box-footer">
-                  More info <i className="fas fa-arrow-circle-right" />
-                </a>
-              </div>
-            </div>
-            {/* ./col */}
-            <div className="col-lg-3 col-6">
-              {/* small box */}
-              <div className="small-box bg-danger">
-                <div className="inner">
-                  <h3>65</h3>
-                  <p>Unique Visitors</p>
-                </div>
-                <div className="icon">
-                  <i className="ion ion-pie-graph" />
-                </div>
-                <a href="/" className="small-box-footer">
-                  More info <i className="fas fa-arrow-circle-right" />
-                </a>
-              </div>
-            </div>
-            {/* ./col */}
+            {/* small box */}
+            <OmniBot
+              botName="Hawk"
+              stylist="small-box bg-info"
+              strategy="Keltner Channels"
+            ></OmniBot>
+            <OmniBot
+              botName="Susi"
+              stylist="small-box bg-warning"
+              strategy="EMA"
+            ></OmniBot>
+            <OmniBot
+              botName="Kiwi"
+              stylist="small-box bg-success"
+              strategy="SMA"
+            ></OmniBot>
+            <OmniBot
+              botName="Controller"
+              stylist="small-box bg-danger"
+            ></OmniBot>
           </div>
           {/* /.row */}
           {/* Main row */}
@@ -120,8 +95,7 @@ return (
       {/* /.content */}
     </div>
     // {/* .content-wrapper */}
-);
-}
+  );
+};
 
 export default Dashboard1;
-

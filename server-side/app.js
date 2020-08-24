@@ -68,12 +68,48 @@ app.get("/callaccountbalance", (req, res, next) => {
     });
     binance.balance((error, balances) => {
       if (error) return console.error(error);
-      console.info("balances()", balances);
       console.info("ETH balance: ", balances.ETH.available);
       res.json(balances);
     });
   };
   checkAccountBalance();
+});
+app.get("/callcheckprice", (req, res, next) => {
+  const checkPrice = async () => {
+    let ticker = await binance.prices();
+    res.json(ticker);
+  };
+  checkPrice();
+});
+app.get("/callklinedata", (req, res, next) => {
+  const checkKlineData = async () => {
+    // Intervals: 1m,3m,5m,15m,30m,1h,2h,4h,6h,8h,12h,1d,3d,1w,1M
+    const market = "IOTAUSDT";
+    binance.candlesticks(
+      market,
+      "1m",
+      (error, ticks, symbol) => {
+        let last_tick = ticks[ticks.length - 1];
+        let [
+          time,
+          open,
+          high,
+          low,
+          close,
+          volume,
+          closeTime,
+          assetVolume,
+          trades,
+          buyBaseVolume,
+          buyAssetVolume,
+          ignored,
+        ] = last_tick;
+        res.json(ticks);
+      },
+      { limit: 30}
+    );
+  };
+  checkKlineData();
 });
 
 app.post("/login", (req, res, next) => {

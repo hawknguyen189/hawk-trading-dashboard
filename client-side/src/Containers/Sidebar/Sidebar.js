@@ -27,7 +27,7 @@ const Sidebar = () => {
             />
           </div>
           <div className="info">
-            <a href="#" className="d-block">
+            <a href="/" className="d-block">
               Kiwi The Boss
             </a>
           </div>
@@ -43,7 +43,7 @@ const Sidebar = () => {
             {/* Add icons to the links using the .nav-icon class
          with font-awesome or any other icon font library */}
             <li className="nav-item has-treeview menu-open">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-tachometer-alt" />
                 <p>
                   Dashboard
@@ -81,7 +81,7 @@ const Sidebar = () => {
               </a>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-copy" />
                 <p>
                   Layout Options
@@ -141,7 +141,7 @@ const Sidebar = () => {
               </ul>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-chart-pie" />
                 <p>
                   Charts
@@ -170,7 +170,7 @@ const Sidebar = () => {
               </ul>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-tree" />
                 <p>
                   UI Elements
@@ -229,7 +229,7 @@ const Sidebar = () => {
               </ul>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-edit" />
                 <p>
                   Forms
@@ -264,7 +264,7 @@ const Sidebar = () => {
               </ul>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-table" />
                 <p>
                   Tables
@@ -309,7 +309,7 @@ const Sidebar = () => {
               </a>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon far fa-envelope" />
                 <p>
                   Mailbox
@@ -338,7 +338,7 @@ const Sidebar = () => {
               </ul>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-book" />
                 <p>
                   Pages
@@ -400,7 +400,7 @@ const Sidebar = () => {
               </ul>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon far fa-plus-square" />
                 <p>
                   Extras
@@ -500,13 +500,13 @@ const Sidebar = () => {
             </li>
             <li className="nav-header">MULTI LEVEL EXAMPLE</li>
             <li className="nav-item">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="fas fa-circle nav-icon" />
                 <p>Level 1</p>
               </a>
             </li>
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-circle" />
                 <p>
                   Level 1
@@ -515,13 +515,13 @@ const Sidebar = () => {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="#" className="nav-link">
+                  <a href="/" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Level 2</p>
                   </a>
                 </li>
                 <li className="nav-item has-treeview">
-                  <a href="#" className="nav-link">
+                  <a href="/" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>
                       Level 2
@@ -530,19 +530,19 @@ const Sidebar = () => {
                   </a>
                   <ul className="nav nav-treeview">
                     <li className="nav-item">
-                      <a href="#" className="nav-link">
+                      <a href="/" className="nav-link">
                         <i className="far fa-dot-circle nav-icon" />
                         <p>Level 3</p>
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a href="#" className="nav-link">
+                      <a href="/" className="nav-link">
                         <i className="far fa-dot-circle nav-icon" />
                         <p>Level 3</p>
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a href="#" className="nav-link">
+                      <a href="/" className="nav-link">
                         <i className="far fa-dot-circle nav-icon" />
                         <p>Level 3</p>
                       </a>
@@ -550,7 +550,7 @@ const Sidebar = () => {
                   </ul>
                 </li>
                 <li className="nav-item">
-                  <a href="#" className="nav-link">
+                  <a href="/" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Level 2</p>
                   </a>
@@ -558,26 +558,26 @@ const Sidebar = () => {
               </ul>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="fas fa-circle nav-icon" />
                 <p>Level 1</p>
               </a>
             </li>
             <li className="nav-header">LABELS</li>
             <li className="nav-item">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon far fa-circle text-danger" />
                 <p className="text">Important</p>
               </a>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon far fa-circle text-warning" />
                 <p>Warning</p>
               </a>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link">
+              <a href="/" className="nav-link">
                 <i className="nav-icon far fa-circle text-info" />
                 <p>Informational</p>
               </a>
