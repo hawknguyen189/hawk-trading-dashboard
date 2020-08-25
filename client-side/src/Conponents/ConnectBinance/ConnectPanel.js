@@ -1,68 +1,72 @@
 import React, { useContext, useEffect } from "react";
 import { UserAccount } from "../../Containers/Context/UserAccount";
 import { CoinContext } from "../../Containers/Context/CoinContext";
+import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const ConnectPanel = () => {
   const { balance, setBalance } = useContext(UserAccount);
   const { coin, setCoin } = useContext(CoinContext);
+  const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
-    const callAccountBalance = async () => {
-      console.log("call account balance ");
-      const endpoint = "callaccountbalance";
-      try {
-        let response = await fetch(`/${endpoint}`);
+    if (isMountedRef.current) {
+      const callAccountBalance = async () => {
+        console.log("call account balance ");
+        const endpoint = "callaccountbalance";
+        try {
+          let response = await fetch(`/${endpoint}`);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        } else {
-          const jsonResponse = await response.json();
-          // const resultParse = JSON.parse(jsonResponse);
-          let mainBalance = [];
-          for (let property in jsonResponse) {
-            // console.log(parseInt(jsonResponse[property]["onOrder"]));
-            if (
-              parseInt(jsonResponse[property]["available"]) > 0 ||
-              parseInt(jsonResponse[property]["onOrder"]) > 0
-            ) {
-              mainBalance.push({
-                symbol: property,
-                ...jsonResponse[property],
-              });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            const jsonResponse = await response.json();
+            // const resultParse = JSON.parse(jsonResponse);
+            let mainBalance = [];
+            for (let property in jsonResponse) {
+              // console.log(parseInt(jsonResponse[property]["onOrder"]));
+              if (
+                parseInt(jsonResponse[property]["available"]) > 0 ||
+                parseInt(jsonResponse[property]["onOrder"]) > 0
+              ) {
+                mainBalance.push({
+                  symbol: property,
+                  ...jsonResponse[property],
+                });
+              }
             }
+            setBalance(mainBalance);
           }
-          setBalance(mainBalance);
+        } catch (e) {
+          console.log("calling account balance error ", e);
         }
-      } catch (e) {
-        console.log("calling account balance error ", e);
-      }
-    };
-    const callCheckPrice = async () => {
-      const endpoint = "callcheckprice";
-      try {
-        let response = await fetch(`/${endpoint}`);
+      };
+      const callCheckPrice = async () => {
+        const endpoint = "callcheckprice";
+        try {
+          let response = await fetch(`/${endpoint}`);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        } else {
-          const jsonResponse = await response.json();
-          // const resultParse = JSON.parse(jsonResponse);
-          // let allPrice = [];
-          // for (let property in jsonResponse) {
-          //   // console.log(parseInt(jsonResponse[property]["onOrder"]));
-          //   allPrice.push(property);
-          // }
-          // console.log("all price ", allPrice);
-          setCoin(jsonResponse);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            const jsonResponse = await response.json();
+            // const resultParse = JSON.parse(jsonResponse);
+            // let allPrice = [];
+            // for (let property in jsonResponse) {
+            //   // console.log(parseInt(jsonResponse[property]["onOrder"]));
+            //   allPrice.push(property);
+            // }
+            // console.log("all price ", allPrice);
+            setCoin(jsonResponse);
+          }
+        } catch (e) {
+          console.log("calling account balance error ", e);
         }
-      } catch (e) {
-        console.log("calling account balance error ", e);
-      }
-    };
-    // return () => {
-    callAccountBalance();
-    callCheckPrice();
-  }, []);
+      };
+      // return () => {
+      callAccountBalance();
+      callCheckPrice();
+    }
+  }, [isMountedRef]);
   return (
     <section className="col-lg-4 connectedSortable">
       {/* Map card */}

@@ -7,7 +7,7 @@ const Binance = require("node-binance-api");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-
+let utilFunction = require("./utils/HelpfulFunction");
 var app = express();
 
 // body-parser to parse parameters sent by the frontend, and cors to allow requests coming from another server or a different port of the same server.
@@ -68,7 +68,6 @@ app.get("/callaccountbalance", (req, res, next) => {
     });
     binance.balance((error, balances) => {
       if (error) return console.error(error);
-      console.info("ETH balance: ", balances.ETH.available);
       res.json(balances);
     });
   };
@@ -81,45 +80,78 @@ app.get("/callcheckprice", (req, res, next) => {
   };
   checkPrice();
 });
-app.get("/callklinedata", (req, res, next) => {
-  const checkKlineData = async () => {
+
+app.post("/checkorder", (req, res, next) => { //check bid  & ask order
+  const symbol = req.body.symbol;
+  binance.bookTickers(symbol, (error, ticker) => {
+    res.json(ticker);
+  });
+  // res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
+  // res.end("yes");
+});
+
+app.post("/callklinedata", (req, res, next) => {
+  const watchlist = [...req.body];
+  let resArray = [];
+  const checkKlineData = async (market, period) => {
     // Intervals: 1m,3m,5m,15m,30m,1h,2h,4h,6h,8h,12h,1d,3d,1w,1M
-    const market = "IOTAUSDT";
-    binance.candlesticks(
+    // const market = "IOTAUSDT";
+    await binance.candlesticks(
       market,
       "1m",
       (error, ticks, symbol) => {
-        let last_tick = ticks[ticks.length - 1];
-        let [
-          time,
-          open,
-          high,
-          low,
-          close,
-          volume,
-          closeTime,
-          assetVolume,
-          trades,
-          buyBaseVolume,
-          buyAssetVolume,
-          ignored,
-        ] = last_tick;
-        res.json(ticks);
+        // let last_tick = ticks[ticks.length - 1];
+        // let [
+        //   time,
+        //   open,
+        //   high,
+        //   low,
+        //   close,
+        //   volume,
+        //   closeTime,
+        //   assetVolume,
+        //   trades,
+        //   buyBaseVolume,
+        //   buyAssetVolume,
+        //   ignored,
+        // ] = last_tick;
+        const reducer = (accumulator, currentValue, currentIndex) =>
+          accumulator + currentValue;
+        const result30SMA = ticks
+          // .slice(0) // create copy of "array" for iterating
+          .reduce((acc, curr) => {
+            // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+            return acc + parseFloat(curr[4]);
+          }, 0);
+        const periodArray = ticks.slice(ticks.length - 7, ticks.length);
+        const result7SMA = periodArray.reduce((acc, curr) => {
+          // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+          return acc + parseFloat(curr[4]);
+        }, 0);
+        // resArray.push({ [market]: result.toFixed(2) / period });
+        resArray.push({
+          symbol: market,
+          SMA7: (result7SMA / 7).toFixed(4),
+          SMA30: (result30SMA / 30).toFixed(4),
+        });
+
+        if (resArray.length === 10) {
+          res.json(resArray);
+        }
+        // modelFunction(period, ticks);
       },
-      { limit: 30}
+      { limit: 30 }
     );
   };
-  checkKlineData();
+  const CookAllData = (period) => {
+    for (let i = 0; i < watchlist.length; i++) {
+      const market = watchlist[i].symbol;
+      checkKlineData(market, period);
+    }
+  };
+  CookAllData(7); //SMA 7, SMA 30 automatiaclly
 });
 
-app.post("/login", (req, res, next) => {
-  console.log(req.body);
-  var user_name = req.body.headers;
-  var password = req.body.method;
-  console.log("User name = " + user_name + ", password is " + password);
-  res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
-  // res.end("yes");
-});
 // *************************************
 // end binance api
 

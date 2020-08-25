@@ -1,39 +1,46 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { CoinContext } from "../../Containers/Context/CoinContext";
 import "../../Containers/Utils/style.scss";
+import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const MainSection = () => {
   const { watchlist, setWatchlist } = useContext(CoinContext);
-  useEffect(() => {
-    const callWathclist = async () => {
-      console.log("inside call");
-      const endpoint = "callwatchlist";
-      try {
-        let response = await fetch(`/${endpoint}`);
+  const isMountedRef = useIsMountedRef();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        } else {
-          console.log("finish calling binance api");
-          const jsonResponse = await response.json();
-          // const resultParse = JSON.parse(jsonResponse);
-          // console.log(jsonResponse);
-          const listUSDT = jsonResponse.filter((e) =>
-            e.symbol.includes("USDT", 1)
-          );
-          const descListUSDT = listUSDT.sort(
-            (a, b) => b.quoteVolume - a.quoteVolume
-          );
-          await setWatchlist(descListUSDT.slice(0, 10));
+  useEffect(() => {
+    if (isMountedRef.current) {
+      const callWathclist = async () => {
+        console.log("inside call");
+        const endpoint = "callwatchlist";
+        try {
+          let response = await fetch(`/${endpoint}`);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            console.log("finish calling binance api");
+            const jsonResponse = await response.json();
+            // const resultParse = JSON.parse(jsonResponse);
+            // console.log(jsonResponse);
+            const listUSDT = jsonResponse.filter((e) =>
+              e.symbol.includes("USDT", 1)
+            );
+            const descListUSDT = listUSDT.sort(
+              (a, b) => b.quoteVolume - a.quoteVolume
+            );
+            await setWatchlist(descListUSDT.slice(0, 10));
+          }
+        } catch (e) {
+          console.log("calling binnance error ", e);
         }
-      } catch (e) {
-        console.log("calling binnance error ", e);
-      }
-    };
-    // return () => {
-    callWathclist();
-    // };
-  }, []);
+      };
+      callWathclist();
+      // const interval = setInterval(() => {
+      //   callWathclist();
+      // }, 900000);
+      // return () => clearInterval(interval);
+    }
+  }, [isMountedRef]);
 
   return (
     <section className="col-lg-8 connectedSortable">

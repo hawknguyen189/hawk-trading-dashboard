@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import CoinContextProvider from "./Containers/Context/CoinContext";
+import BotContextProvider from "./Containers/Context/BotContext";
 import UserAccountProvider from "./Containers/Context/UserAccount";
 
 ReactDOM.render(
   <UserAccountProvider>
     <CoinContextProvider>
-      <App />
+      <BotContextProvider>
+        <App />
+      </BotContextProvider>
     </CoinContextProvider>
   </UserAccountProvider>,
   document.getElementById("root")

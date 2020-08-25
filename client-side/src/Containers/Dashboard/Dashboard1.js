@@ -1,31 +1,152 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 // import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
 // import Dashboard1Data from "./Data/Dashboard1Data";
 import ConnectPanel from "../../Conponents/ConnectBinance/ConnectPanel";
 import MainSection from "../../Conponents/ConnectBinance/MainSection";
 import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
+import { CoinContext } from "../Context/CoinContext";
+import { BotContext } from "../Context/BotContext";
+import { useIsMountedRef } from "../Utils/CustomHook";
 
 const Dashboard1 = () => {
+  const isMountedRef = useIsMountedRef(); // fix React state update on an unmounted component
+  //function set local storage
+  const Storage = (order, botName) => {
+    localStorage.setItem(botName, JSON.stringify({ [botName]: order }));
+  };
+
+  const { watchlist } = useContext(CoinContext);
+  const { movingAverage, setMovingAverage } = useContext(CoinContext);
+  const { bot, setBot } = useContext(BotContext);
+
   useEffect(() => {
-    const callKlineData = async () => {
-      const endpoint = "callklinedata";
+    if (isMountedRef.current) {
+      const callKlineData = async () => {
+        const endpoint = "callklinedata";
+        if (watchlist !== []) {
+          try {
+            let response = await fetch(`/${endpoint}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: JSON.stringify(watchlist), // body data type must match "Content-Type" header
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            } else {
+              const jsonResponse = await response.json();
+              // const resultParse = JSON.parse(jsonResponse);
+              console.log("kline ", jsonResponse);
+              setMovingAverage(jsonResponse);
+            }
+          } catch (e) {
+            console.log("calling kline/candlestick error ", e);
+          }
+        }
+      };
+      callKlineData();
+      // const interval = setInterval(() => {
+      //   callKlineData();
+      // }, 10000);
+      // return () => clearInterval(interval);
+    }
+  }, [watchlist, isMountedRef]);
+
+  useEffect(() => {
+    const placeOrder = async (symbol, action, botName) => {
+      //check and place a single order based on symbol pair
+      console.log("check ask & bid order");
+      const endpoint = "checkorder";
       try {
-        let response = await fetch(`/${endpoint}`);
+        let response = await fetch(`/${endpoint}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: JSON.stringify({ symbol: symbol }), // body data type must match "Content-Type" header
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         } else {
           const jsonResponse = await response.json();
-          // const resultParse = JSON.parse(jsonResponse);
-          
-          console.log("kline ", jsonResponse);
+          console.log("check order ", action, jsonResponse);
+          if (action === "buy") {
+            let order = {
+              [botName]: {
+                initialPrice: jsonResponse.askPrice,
+                quantity: bot[botName].fund / jsonResponse.askPrice,
+                status: "occupied",
+                holding: jsonResponse.symbol,
+              },
+            };
+            Storage({ ...bot[botName], ...order[botName] }, botName);
+            setBot((prevState) => ({
+              ...prevState,
+              [botName]: {
+                ...prevState[botName],
+                ...order[botName],
+              },
+            }));
+          } else if (action === "sell") {
+            let order = {
+              [botName]: {
+                initialPrice: 0,
+                quantity: 0,
+                status: "vacant",
+                holding: "",
+                fund: bot[botName].quantity * jsonResponse.bidPrice,
+              },
+            };
+            Storage({ ...bot[botName], ...order[botName] }, botName);
+            setBot((prevState) => ({
+              ...prevState,
+              [botName]: {
+                ...prevState[botName],
+                ...order[botName],
+              },
+            }));
+          }
         }
       } catch (e) {
         console.log("calling account balance error ", e);
       }
     };
-    callKlineData();
-  }, []);
+    // code to judge placing an order
+    // only run when movingAverage != empty
+    // feel free to add more algo and safety lock for it
+    if (movingAverage) {
+      for (let i = 0; i < movingAverage.length; i++) {
+        if (bot) {
+          for (let property in bot) {
+            console.log(property, bot[property]);
+            if (
+              movingAverage[i].SMA7 > movingAverage[i].SMA30 * 0.85 &&
+              bot[property].status === "vacant" &&
+              bot[property].offline === false
+            ) {
+              placeOrder(movingAverage[i].symbol, "buy", property);
+              break;
+            }
+            if (
+              bot[property].status === "occupied" &&
+              movingAverage[i].symbol === bot[property].holding &&
+              bot[property].offline === false
+            ) {
+              if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 1.001) {
+                placeOrder(movingAverage[i].symbol, "sell", property);
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }, [movingAverage]);
   return (
     // {/* Content Wrapper. Contains page content */}
     <div className="content-wrapper">
@@ -59,24 +180,21 @@ const Dashboard1 = () => {
           <div className="row">
             {/* small box */}
             <OmniBot
-              botName="Hawk"
+              botName="bothawk"
               stylist="small-box bg-info"
-              strategy="Keltner Channels"
+              model="Keltner Channels"
             ></OmniBot>
             <OmniBot
-              botName="Susi"
+              botName="botsusi"
               stylist="small-box bg-warning"
-              strategy="EMA"
+              model="EMA"
             ></OmniBot>
             <OmniBot
-              botName="Kiwi"
+              botName="botkiwi"
               stylist="small-box bg-success"
-              strategy="SMA"
+              model="SMA"
             ></OmniBot>
-            <OmniBot
-              botName="Controller"
-              stylist="small-box bg-danger"
-            ></OmniBot>
+            <OmniBot botName="Controller" model="small-box bg-danger"></OmniBot>
           </div>
           {/* /.row */}
           {/* Main row */}
