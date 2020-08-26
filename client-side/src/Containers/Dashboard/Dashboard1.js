@@ -18,7 +18,8 @@ const Dashboard1 = () => {
 
   const { watchlist } = useContext(CoinContext);
   const { movingAverage, setMovingAverage } = useContext(CoinContext);
-  const { bot, setBot } = useContext(BotContext);
+  const { coin, setCoin } = useContext(CoinContext);
+  const { bot, setBot, pause, setPause } = useContext(BotContext);
 
   useEffect(() => {
     if (isMountedRef.current) {
@@ -59,7 +60,7 @@ const Dashboard1 = () => {
   useEffect(() => {
     const placeOrder = async (symbol, action, botName) => {
       //check and place a single order based on symbol pair
-      console.log("check ask & bid order ", symbol);
+      console.log("check ask & bid order ", symbol, botName);
       const endpoint = "checkorder";
       try {
         let response = await fetch(`/${endpoint}`, {
@@ -122,13 +123,37 @@ const Dashboard1 = () => {
     // feel free to add more algo and safety lock for it
     const manageBot = async () => {
       if (movingAverage) {
-        let assignedJob = {
-          botkiwi: false,
-          bothawk: false,
-          botsusi: false,
-        };
-        for (let i = 0; i < movingAverage.length; i++) {
-          if (bot) {
+        //get all the bot name to manage assigning jobs
+        if (bot) {
+          const botArray = Object.keys(bot);
+          let assignedJob = {};
+          botArray.forEach((e) => (assignedJob[e] = false));
+
+          const btcWatchDog = (() => {
+            //btc watchdog function will run automatiacally
+            const btcMA = movingAverage.find((e) => e.symbol === "BTCUSDT");
+            //setting up watch dog bitcoin
+            // basic knowledge is to compare bitcoin spot vs kline 1m
+            //if fluctuation higher than 100usd then pause all bots
+            // console.log("inside watchdog");
+            // if (parseFloat(coin["BTCUSDT"]) - movingAverage[i].SMA7 < -50) {
+            if (
+              parseFloat(coin["BTCUSDT"]) - btcMA.SMA7 < -75 &&
+              pause === false
+            ) {
+              botArray.forEach((e) => (assignedJob[e] = true)); //stop all bots in roundin case react update pause context late
+              console.log("done pausing");
+              setPause(true);
+            } else if (
+              parseFloat(coin["BTCUSDT"]) - btcMA.SMA7 > 75 &&
+              pause === true
+            ) {
+              console.log("unpause all coins");
+              setPause(false);
+            }
+          })();
+
+          for (let i = 0; i < movingAverage.length; i++) {
             for (let property in bot) {
               // console.log(property, bot[property]);
               if (bot[property].model === "SMA") {
@@ -136,7 +161,8 @@ const Dashboard1 = () => {
                   movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.0015 &&
                   bot[property].status === "vacant" &&
                   bot[property].offline === false &&
-                  assignedJob[property] === false
+                  assignedJob[property] === false &&
+                  pause === false
                 ) {
                   assignedJob[property] = true;
                   await placeOrder(movingAverage[i].symbol, "buy", property);
@@ -155,12 +181,21 @@ const Dashboard1 = () => {
                   }
                 }
               } else if (bot[property].model === "SPOTMA") {
+                //setting condition for Spot price vs MA
                 if (
-                  movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.0015 &&
+                  parseFloat(coin[movingAverage[i].symbol]) >
+                    movingAverage[i].SMA7 * 1.0015 &&
                   bot[property].status === "vacant" &&
                   bot[property].offline === false &&
-                  assignedJob[property] === false
+                  assignedJob[property] === false &&
+                  pause === false
                 ) {
+                  console.log(
+                    "this is the spot price ",
+                    coin[movingAverage[i].symbol],
+                    "SMA7 is ",
+                    movingAverage[i].SMA7
+                  );
                   assignedJob[property] = true;
                   await placeOrder(movingAverage[i].symbol, "buy", property);
                   break;
@@ -171,16 +206,26 @@ const Dashboard1 = () => {
                   bot[property].offline === false &&
                   assignedJob[property] === false
                 ) {
-                  if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 1.0015) {
+                  if (
+                    parseFloat(coin[movingAverage[i].symbol]) <
+                    movingAverage[i].SMA7 * 1.0015
+                  ) {
+                    console.log(
+                      "this is the spot price ",
+                      coin[movingAverage[i].symbol],
+                      "SMA7 is ",
+                      movingAverage[i].SMA7
+                    );
                     assignedJob[property] = true;
                     await placeOrder(movingAverage[i].symbol, "sell", property);
                     break;
                   }
                 }
               }
-            }
+              //end if condition for managing bots
+            } //end for loop over moving average
           }
-        }
+        } //if bot exists
       }
     };
     manageBot();
@@ -223,10 +268,14 @@ const Dashboard1 = () => {
             <OmniBot botName="bothawk" stylist="small-box bg-info"></OmniBot>
             <OmniBot botName="botsusi" stylist="small-box bg-warning"></OmniBot>
             <OmniBot botName="botkiwi" stylist="small-box bg-success"></OmniBot>
-            <BotController
+            <OmniBot
+              botName="btcwatchdog"
+              stylist="small-box bg-danger"
+            ></OmniBot>
+            {/* <BotController
               botName="Controller"
               stylist="small-box bg-danger"
-            ></BotController>
+            ></BotController> */}
           </div>
           {/* /.row */}
           {/* Main row */}

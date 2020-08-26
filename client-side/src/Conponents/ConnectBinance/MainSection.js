@@ -8,10 +8,10 @@ const MainSection = () => {
   const { watchlist, setWatchlist } = useContext(CoinContext);
   const { bot } = useContext(BotContext);
   const isMountedRef = useIsMountedRef();
-
+  
   useEffect(() => {
     if (isMountedRef.current) {
-      const callWathclist = async () => {
+      const callWatchlist = async () => {
         console.log("inside watchlist call");
         const endpoint = "callwatchlist";
         try {
@@ -20,7 +20,6 @@ const MainSection = () => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           } else {
-            console.log("finish calling binance api");
             const jsonResponse = await response.json();
             const listUSDT = jsonResponse.filter((e) =>
               e.symbol.includes("USDT", 1)
@@ -40,8 +39,8 @@ const MainSection = () => {
                   const checktop10List = top10List.find(
                     (e) => e.symbol === getHoldingData.symbol
                   );
-                  if (!checktop10List){
-                    top10List.push(getHoldingData)
+                  if (!checktop10List) {
+                    top10List.push(getHoldingData);
                   }
                 }
               }
@@ -53,9 +52,9 @@ const MainSection = () => {
           console.log("calling binnance error ", e);
         }
       };
-      callWathclist();
+      callWatchlist();
       const interval = setInterval(() => {
-        callWathclist();
+        callWatchlist();
       }, 900000);
       return () => clearInterval(interval);
     }

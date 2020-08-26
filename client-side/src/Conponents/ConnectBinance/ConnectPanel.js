@@ -41,6 +41,7 @@ const ConnectPanel = () => {
         }
       };
       const callCheckPrice = async () => {
+        // console.log("call check price")
         const endpoint = "callcheckprice";
         try {
           let response = await fetch(`/${endpoint}`);
@@ -59,12 +60,16 @@ const ConnectPanel = () => {
             setCoin(jsonResponse);
           }
         } catch (e) {
-          console.log("calling account balance error ", e);
+          console.log("calling check all price error ", e);
         }
       };
       // return () => {
       callAccountBalance();
       callCheckPrice();
+      const interval = setInterval(() => {
+        callCheckPrice();
+      }, 2500);
+      return () => clearInterval(interval);
     }
   }, [isMountedRef]);
   return (

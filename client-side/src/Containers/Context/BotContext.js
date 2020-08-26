@@ -19,8 +19,8 @@ const BotContextProvider = ({ children }) => {
         bothawk: {
           status: "vacant",
           fund: 1000,
-          offline: true,
-          model:"SPOTMA"
+          offline: false,
+          model: "SPOTMA",
         },
       };
   const localSusi = localStorage.getItem("botsusi")
@@ -30,7 +30,17 @@ const BotContextProvider = ({ children }) => {
           status: "vacant",
           fund: 1000,
           offline: true,
-          model:"EMA"
+          model: "EMA",
+        },
+      };
+  const btcWatchdog = localStorage.getItem("btcwatchdog")
+    ? JSON.parse(localStorage.getItem("btcwatchdog"))
+    : {
+        btcwatchdog: {
+          status: "scouting",
+          fund: 666,
+          offline: false,
+          model: "WATCHDOG",
         },
       };
 
@@ -38,14 +48,18 @@ const BotContextProvider = ({ children }) => {
     ...localKiwi,
     ...localHawk,
     ...localSusi,
+    ...btcWatchdog,
   };
   const [bot, setBot] = useState(initialState);
+  const [pause, setPause] = useState(false);
   const contextValues = useMemo(
     () => ({
       bot,
       setBot,
+      pause,
+      setPause,
     }),
-    [bot]
+    [bot, pause]
   );
   return (
     <BotContext.Provider value={contextValues}>{children}</BotContext.Provider>

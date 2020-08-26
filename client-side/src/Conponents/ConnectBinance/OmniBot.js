@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { BotContext } from "../../Containers/Context/BotContext";
 
 const OmniBot = ({ botName, stylist }) => {
-  const { bot, setBot } = useContext(BotContext);
+  const { bot, setBot, pause } = useContext(BotContext);
   const [botInfo, setBotInfo] = useState("");
   useEffect(() => {
     if (bot) {
@@ -29,6 +29,11 @@ const OmniBot = ({ botName, stylist }) => {
                 {botInfo.holding
                   ? `Bot Holding:  ${botInfo.holding}  @${botInfo.initialPrice}`
                   : ""}
+              </p>
+              <p>
+                {pause
+                  ? "Paused All Bots"
+                  : "All working well"}
               </p>
             </div>
           )}
