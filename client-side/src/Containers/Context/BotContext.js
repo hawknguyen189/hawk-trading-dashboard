@@ -29,7 +29,7 @@ const BotContextProvider = ({ children }) => {
         botsusi: {
           status: "vacant",
           fund: 1000,
-          offline: true,
+          offline: false,
           model: "EMA",
         },
       };
