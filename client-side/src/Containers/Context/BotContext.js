@@ -52,7 +52,7 @@ const BotContextProvider = ({ children }) => {
           status: "vacant",
           fund: 1000,
           offline: false,
-          model: "EMA",
+          model: "EMAp",
         },
       };
   const localMilo = localStorage.getItem("botmilo")

@@ -120,19 +120,23 @@ app.post("/callklinedata", (req, res, next) => {
         // work on latest element for SPA purpose
         //array.slice selected from start index to end index (end not included)
         const latest30Array = ticks.slice(ticks.length - 30, ticks.length);
-        const result30SMA = latest30Array
-          // .slice(0) // create copy of "array" for iterating
-          .reduce((acc, curr) => {
+        const result30SMA = latest30Array.reduce((acc, curr) => {
             // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
             return acc + parseFloat(curr[4]);
           }, 0);
         const period10Array = ticks.slice(ticks.length - 10, ticks.length);
-        const result10SMA = period10Array
-          // .slice(0) // create copy of "array" for iterating
-          .reduce((acc, curr) => {
+        const result10SMA = period10Array.reduce((acc, curr) => {
             // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
             return acc + parseFloat(curr[4]);
           }, 0);
+        const res30EMA = latest30Array.reduce((acc, curr, index) => {
+            // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+            return acc + parseFloat(curr[4] * 2 / (index + 2));
+          }, 0);
+        const quotien30EMA = latest30Array.reduce((acc, curr, index) => {
+          // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+          return acc + parseFloat(2 / (index + 2));
+        }, 0);
         const period5Array = ticks.slice(ticks.length - 5, ticks.length);
         const result5SMA = period5Array
           // .slice(0) // create copy of "array" for iterating
@@ -144,13 +148,13 @@ app.post("/callklinedata", (req, res, next) => {
           // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
           return acc + parseFloat(curr[4] * 2 / (index + 2));
         }, 0);
-        const periodArray = ticks.slice(ticks.length - 7, ticks.length);
-        const result7SMA = periodArray.reduce((acc, curr) => {
-          return acc + parseFloat(curr[4]);
-        }, 0);
         const quotien5EMA = period5Array.reduce((acc, curr, index) => {
           // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
           return acc + parseFloat(2 / (index + 2));
+        }, 0);
+        const periodArray = ticks.slice(ticks.length - 7, ticks.length);
+        const result7SMA = periodArray.reduce((acc, curr) => {
+          return acc + parseFloat(curr[4]);
         }, 0);
         // resArray.push({ [market]: result.toFixed(2) / period });
 
@@ -185,6 +189,7 @@ app.post("/callklinedata", (req, res, next) => {
           SMA10: (result10SMA / 10).toFixed(4),
           SMA30: (result30SMA / 30).toFixed(4),
           EMA7: result7EMA.toFixed(4),
+          EMA30p: (res30EMA / quotien30EMA).toFixed(4),
           EMA30: result30EMA.toFixed(4),
         });
 

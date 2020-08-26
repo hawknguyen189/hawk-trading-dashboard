@@ -185,9 +185,9 @@ const Dashboard1 = () => {
                     break;
                   }
                 }
-              } else if (bot[property].model === "EMA") {
+              } else if (bot[property].model === "EMAp") {
                 if (
-                  movingAverage[i].EMA5 > movingAverage[i].SMA30 * 1.0015 &&
+                  movingAverage[i].EMA5 > movingAverage[i].EMA30p * 1.003 &&
                   bot[property].status === "vacant" &&
                   bot[property].offline === false &&
                   assignedJob[property] === false
@@ -202,7 +202,7 @@ const Dashboard1 = () => {
                   bot[property].offline === false &&
                   assignedJob[property] === false
                 ) {
-                  if (movingAverage[i].EMA5 < movingAverage[i].SMA30 * 1.0015) {
+                  if (movingAverage[i].EMA5 < movingAverage[i].EMA30p * 1.003) {
                     assignedJob[property] = true;
                     await placeOrder(movingAverage[i].symbol, "sell", property);
                     break;
