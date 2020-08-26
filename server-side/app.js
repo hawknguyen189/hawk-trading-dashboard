@@ -124,15 +124,40 @@ app.post("/callklinedata", (req, res, next) => {
             // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
             return acc + parseFloat(curr[4]);
           }, 0);
+        const period10Array = ticks.slice(ticks.length - 10, ticks.length);
+        const result10SMA = period10Array
+          // .slice(0) // create copy of "array" for iterating
+          .reduce((acc, curr) => {
+            // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+            return acc + parseFloat(curr[4]);
+          }, 0);
+        const period5Array = ticks.slice(ticks.length - 5, ticks.length);
+        const result5SMA = period5Array
+          // .slice(0) // create copy of "array" for iterating
+          .reduce((acc, curr) => {
+            // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+            return acc + parseFloat(curr[4]);
+          }, 0);
+        const result5EMA = period5Array.reduce((acc, curr, index) => {
+          // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+          return acc + parseFloat(curr[4] * 2 / (index + 2));
+        }, 0);
         const periodArray = ticks.slice(ticks.length - 7, ticks.length);
         const result7SMA = periodArray.reduce((acc, curr) => {
           // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
           return acc + parseFloat(curr[4]);
         }, 0);
+        const quotien5EMA = period5Array.reduce((acc, curr, index) => {
+          // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+          return acc + parseFloat(2 / (index + 2));
+        }, 0);
         // resArray.push({ [market]: result.toFixed(2) / period });
         resArray.push({
           symbol: market,
+          SMA5: (result5SMA / 5).toFixed(4),
           SMA7: (result7SMA / 7).toFixed(4),
+          EMA5: (result5EMA / quotien5EMA).toFixed(4),
+          SMA10: (result10SMA / 10).toFixed(4),
           SMA30: (result30SMA / 30).toFixed(4),
         });
 

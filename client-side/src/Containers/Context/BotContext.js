@@ -9,7 +9,7 @@ const BotContextProvider = ({ children }) => {
         botkiwi: {
           status: "vacant",
           fund: 1000,
-          offline: false,
+          offline: true,
           model: "SMA",
         },
       };
@@ -41,6 +41,38 @@ const BotContextProvider = ({ children }) => {
           fund: 666,
           offline: false,
           model: "WATCHDOG",
+          offline: false,
+          model:"SMLMA"
+        },
+      };
+  const localHao = localStorage.getItem("bothao")
+    ? JSON.parse(localStorage.getItem("bothao"))
+    : {
+      bothao: {
+          status: "vacant",
+          fund: 1000,
+          offline: false,
+          model: "EMA",
+        },
+      };
+  const localMilo = localStorage.getItem("botmilo")
+    ? JSON.parse(localStorage.getItem("botmilo"))
+    : {
+        botmilo: {
+          status: "vacant",
+          fund: 1000,
+          offline: false,
+          model:"RM"
+        },
+      };
+  const localCeci = localStorage.getItem("botceci")
+    ? JSON.parse(localStorage.getItem("botceci"))
+    : {
+        botceci: {
+          status: "vacant",
+          fund: 1000,
+          offline: false,
+          model:"RD"
         },
       };
 
@@ -48,6 +80,9 @@ const BotContextProvider = ({ children }) => {
     ...localKiwi,
     ...localHawk,
     ...localSusi,
+    ...localHao,
+    ...localMilo,
+    ...localCeci,
     ...btcWatchdog,
   };
   const [bot, setBot] = useState(initialState);
