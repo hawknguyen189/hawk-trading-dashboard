@@ -158,7 +158,7 @@ const Dashboard1 = () => {
               // console.log(property, bot[property]);
               if (bot[property].model === "SMA") {
                 if (
-                  movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.0015 &&
+                  movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.002 &&
                   bot[property].status === "vacant" &&
                   bot[property].offline === false &&
                   assignedJob[property] === false &&
@@ -169,22 +169,26 @@ const Dashboard1 = () => {
                   break;
                 }
                 if (
+                  //sell order
                   bot[property].status === "occupied" &&
                   movingAverage[i].symbol === bot[property].holding &&
                   bot[property].offline === false &&
                   assignedJob[property] === false
                 ) {
-                  if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 1.0015) {
+                  if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 0.998) {
                     assignedJob[property] = true;
                     await placeOrder(movingAverage[i].symbol, "sell", property);
                     break;
                   }
                 }
               } else if (bot[property].model === "SPOTMA") {
-                //setting condition for Spot price vs MA
+                //setting condition for Spot price vs MA (Price Crossovers)
+                //The longer moving average sets the tone for the bigger trend and the
+                // shorter moving average is used to generate the signals.
                 if (
+                  //bot will buy if spot price higher than 1.005 SMA7
                   parseFloat(coin[movingAverage[i].symbol]) >
-                    movingAverage[i].SMA7 * 1.0015 &&
+                    movingAverage[i].SMA30 * 1.0035 &&
                   bot[property].status === "vacant" &&
                   bot[property].offline === false &&
                   assignedJob[property] === false &&
@@ -207,8 +211,10 @@ const Dashboard1 = () => {
                   assignedJob[property] === false
                 ) {
                   if (
+                    //sell order
+                    //bot will sell if spot price higher less 1.005 SMA7
                     parseFloat(coin[movingAverage[i].symbol]) <
-                    movingAverage[i].SMA7 * 1.0015
+                    movingAverage[i].SMA30 * 0.998
                   ) {
                     console.log(
                       "this is the spot price ",
