@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BotContext } from "../../Containers/Context/BotContext";
 
-const OmniBot = ({ botName, stylist, model }) => {
+const OmniBot = ({ botName, stylist }) => {
   const { bot, setBot } = useContext(BotContext);
   const [botInfo, setBotInfo] = useState("");
   useEffect(() => {
@@ -23,7 +23,7 @@ const OmniBot = ({ botName, stylist, model }) => {
                 {botName} - {botInfo.offline ? "Offline" : "Online"} Status :{" "}
                 {botInfo.status}
               </h5>
-              <p>{model}</p>
+              <p>{botInfo.model}</p>
               <p>Total Fund: {botInfo.fund}</p>
               <p>
                 {botInfo.holding

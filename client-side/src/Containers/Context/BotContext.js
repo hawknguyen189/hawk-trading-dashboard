@@ -10,6 +10,7 @@ const BotContextProvider = ({ children }) => {
           status: "vacant",
           fund: 1000,
           offline: false,
+          model: "SMA",
         },
       };
   const localHawk = localStorage.getItem("bothawk")
@@ -19,6 +20,7 @@ const BotContextProvider = ({ children }) => {
           status: "vacant",
           fund: 1000,
           offline: true,
+          model:"SPOTMA"
         },
       };
   const localSusi = localStorage.getItem("botsusi")
@@ -28,6 +30,7 @@ const BotContextProvider = ({ children }) => {
           status: "vacant",
           fund: 1000,
           offline: true,
+          model:"EMA"
         },
       };
 

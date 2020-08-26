@@ -41,7 +41,7 @@ const binance = new Binance().options({
   useServerTime: true,
 });
 app.get("/callwatchlist", (req, res, next) => {
-  console.log("here is the get response");
+  console.log("here is the watchlist call");
   // const checkAllPrice = async () => {
   //   let response = await binance.prices();
   //   console.info(`Price of BNB: ${response.BNBUSDT}`);
@@ -81,7 +81,8 @@ app.get("/callcheckprice", (req, res, next) => {
   checkPrice();
 });
 
-app.post("/checkorder", (req, res, next) => { //check bid  & ask order
+app.post("/checkorder", (req, res, next) => {
+  //check bid  & ask order
   const symbol = req.body.symbol;
   binance.bookTickers(symbol, (error, ticker) => {
     res.json(ticker);
@@ -135,7 +136,7 @@ app.post("/callklinedata", (req, res, next) => {
           SMA30: (result30SMA / 30).toFixed(4),
         });
 
-        if (resArray.length === 10) {
+        if (resArray.length === watchlist.length) {
           res.json(resArray);
         }
         // modelFunction(period, ticks);

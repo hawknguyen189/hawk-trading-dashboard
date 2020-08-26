@@ -4,6 +4,7 @@ import React, { useEffect, useContext } from "react";
 import ConnectPanel from "../../Conponents/ConnectBinance/ConnectPanel";
 import MainSection from "../../Conponents/ConnectBinance/MainSection";
 import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
+import BotController from "../../Conponents/ConnectBinance/BotController";
 import { CoinContext } from "../Context/CoinContext";
 import { BotContext } from "../Context/BotContext";
 import { useIsMountedRef } from "../Utils/CustomHook";
@@ -23,7 +24,7 @@ const Dashboard1 = () => {
     if (isMountedRef.current) {
       const callKlineData = async () => {
         const endpoint = "callklinedata";
-        if (watchlist !== []) {
+        if (watchlist) {
           try {
             let response = await fetch(`/${endpoint}`, {
               method: "POST",
@@ -48,17 +49,17 @@ const Dashboard1 = () => {
         }
       };
       callKlineData();
-      // const interval = setInterval(() => {
-      //   callKlineData();
-      // }, 10000);
-      // return () => clearInterval(interval);
+      const interval = setInterval(() => {
+        callKlineData();
+      }, 10000);
+      return () => clearInterval(interval);
     }
   }, [watchlist, isMountedRef]);
 
   useEffect(() => {
     const placeOrder = async (symbol, action, botName) => {
       //check and place a single order based on symbol pair
-      console.log("check ask & bid order");
+      console.log("check ask & bid order ", symbol);
       const endpoint = "checkorder";
       try {
         let response = await fetch(`/${endpoint}`, {
@@ -119,34 +120,74 @@ const Dashboard1 = () => {
     // code to judge placing an order
     // only run when movingAverage != empty
     // feel free to add more algo and safety lock for it
-    if (movingAverage) {
-      for (let i = 0; i < movingAverage.length; i++) {
-        if (bot) {
-          for (let property in bot) {
-            console.log(property, bot[property]);
-            if (
-              movingAverage[i].SMA7 > movingAverage[i].SMA30 * 0.85 &&
-              bot[property].status === "vacant" &&
-              bot[property].offline === false
-            ) {
-              placeOrder(movingAverage[i].symbol, "buy", property);
-              break;
-            }
-            if (
-              bot[property].status === "occupied" &&
-              movingAverage[i].symbol === bot[property].holding &&
-              bot[property].offline === false
-            ) {
-              if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 1.001) {
-                placeOrder(movingAverage[i].symbol, "sell", property);
-                break;
+    const manageBot = async () => {
+      if (movingAverage) {
+        let assignedJob = {
+          botkiwi: false,
+          bothawk: false,
+          botsusi: false,
+        };
+        for (let i = 0; i < movingAverage.length; i++) {
+          if (bot) {
+            for (let property in bot) {
+              // console.log(property, bot[property]);
+              if (bot[property].model === "SMA") {
+                if (
+                  movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.0015 &&
+                  bot[property].status === "vacant" &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  assignedJob[property] = true;
+                  await placeOrder(movingAverage[i].symbol, "buy", property);
+                  break;
+                }
+                if (
+                  bot[property].status === "occupied" &&
+                  movingAverage[i].symbol === bot[property].holding &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 1.0015) {
+                    assignedJob[property] = true;
+                    await placeOrder(movingAverage[i].symbol, "sell", property);
+                    break;
+                  }
+                }
+              } else if (bot[property].model === "SPOTMA") {
+                if (
+                  movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.0015 &&
+                  bot[property].status === "vacant" &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  assignedJob[property] = true;
+                  await placeOrder(movingAverage[i].symbol, "buy", property);
+                  break;
+                }
+                if (
+                  bot[property].status === "occupied" &&
+                  movingAverage[i].symbol === bot[property].holding &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 1.0015) {
+                    assignedJob[property] = true;
+                    await placeOrder(movingAverage[i].symbol, "sell", property);
+                    break;
+                  }
+                }
               }
             }
           }
         }
       }
-    }
+    };
+    manageBot();
+    // *****************************
+    // end working on bot
   }, [movingAverage]);
+
   return (
     // {/* Content Wrapper. Contains page content */}
     <div className="content-wrapper">
@@ -179,22 +220,13 @@ const Dashboard1 = () => {
           {/* Small boxes (Stat box) */}
           <div className="row">
             {/* small box */}
-            <OmniBot
-              botName="bothawk"
-              stylist="small-box bg-info"
-              model="Keltner Channels"
-            ></OmniBot>
-            <OmniBot
-              botName="botsusi"
-              stylist="small-box bg-warning"
-              model="EMA"
-            ></OmniBot>
-            <OmniBot
-              botName="botkiwi"
-              stylist="small-box bg-success"
-              model="SMA"
-            ></OmniBot>
-            <OmniBot botName="Controller" model="small-box bg-danger"></OmniBot>
+            <OmniBot botName="bothawk" stylist="small-box bg-info"></OmniBot>
+            <OmniBot botName="botsusi" stylist="small-box bg-warning"></OmniBot>
+            <OmniBot botName="botkiwi" stylist="small-box bg-success"></OmniBot>
+            <BotController
+              botName="Controller"
+              stylist="small-box bg-danger"
+            ></BotController>
           </div>
           {/* /.row */}
           {/* Main row */}

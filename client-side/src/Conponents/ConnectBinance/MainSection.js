@@ -2,15 +2,17 @@ import React, { useEffect, useContext, useState } from "react";
 import { CoinContext } from "../../Containers/Context/CoinContext";
 import "../../Containers/Utils/style.scss";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
+import { BotContext } from "../../Containers/Context/BotContext";
 
 const MainSection = () => {
   const { watchlist, setWatchlist } = useContext(CoinContext);
+  const { bot } = useContext(BotContext);
   const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
     if (isMountedRef.current) {
       const callWathclist = async () => {
-        console.log("inside call");
+        console.log("inside watchlist call");
         const endpoint = "callwatchlist";
         try {
           let response = await fetch(`/${endpoint}`);
@@ -20,27 +22,44 @@ const MainSection = () => {
           } else {
             console.log("finish calling binance api");
             const jsonResponse = await response.json();
-            // const resultParse = JSON.parse(jsonResponse);
-            // console.log(jsonResponse);
             const listUSDT = jsonResponse.filter((e) =>
               e.symbol.includes("USDT", 1)
             );
             const descListUSDT = listUSDT.sort(
               (a, b) => b.quoteVolume - a.quoteVolume
             );
-            await setWatchlist(descListUSDT.slice(0, 10));
+            const top10List = descListUSDT.slice(0, 10);
+            //add check function to add holding pair in case out of top 10 vol
+            if (bot) {
+              const holdingList = [];
+              for (let property in bot) {
+                if (bot[property].holding) {
+                  const getHoldingData = descListUSDT.find(
+                    (e) => e.symbol === bot[property].holding
+                  );
+                  const checktop10List = top10List.find(
+                    (e) => e.symbol === getHoldingData.symbol
+                  );
+                  if (!checktop10List){
+                    top10List.push(getHoldingData)
+                  }
+                }
+              }
+            }
+            //finish adding holding pair
+            setWatchlist(top10List);
           }
         } catch (e) {
           console.log("calling binnance error ", e);
         }
       };
       callWathclist();
-      // const interval = setInterval(() => {
-      //   callWathclist();
-      // }, 900000);
-      // return () => clearInterval(interval);
+      const interval = setInterval(() => {
+        callWathclist();
+      }, 900000);
+      return () => clearInterval(interval);
     }
-  }, [isMountedRef]);
+  }, [bot, isMountedRef]);
 
   return (
     <section className="col-lg-8 connectedSortable">
