@@ -318,12 +318,15 @@ const Dashboard1 = () => {
           {/* Small boxes (Stat box) */}
           <div className="row">
             {/* small box */}
-            <OmniBot botName="bothao" stylist="small-box bg-info"></OmniBot>
-            <OmniBot botName="botmilo" stylist="small-box bg-warning"></OmniBot>
-            <OmniBot botName="botceci" stylist="small-box bg-success"></OmniBot>
             <OmniBot botName="botkiwi" stylist="small-box bg-info"></OmniBot>
             <OmniBot botName="bothawk" stylist="small-box bg-warning"></OmniBot>
             <OmniBot botName="botsusi" stylist="small-box bg-success"></OmniBot>
+          </div>
+          <div className="row">
+            {/* small box */}
+            <OmniBot botName="bothao" stylist="small-box bg-info"></OmniBot>
+            <OmniBot botName="botmilo" stylist="small-box bg-warning"></OmniBot>
+            <OmniBot botName="botceci" stylist="small-box bg-success"></OmniBot>
           </div>
           <div className="row">
             {/* small box */}
