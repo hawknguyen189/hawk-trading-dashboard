@@ -116,24 +116,51 @@ app.post("/callklinedata", (req, res, next) => {
         //   buyAssetVolume,
         //   ignored,
         // ] = last_tick;
-        const reducer = (accumulator, currentValue, currentIndex) =>
-          accumulator + currentValue;
-        const result30SMA = ticks
+
+        // work on latest element for SPA purpose
+        //array.slice selected from start index to end index (end not included)
+        const latest30Array = ticks.slice(ticks.length - 30, ticks.length);
+        const result30SMA = latest30Array
           // .slice(0) // create copy of "array" for iterating
           .reduce((acc, curr) => {
             // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
             return acc + parseFloat(curr[4]);
           }, 0);
-        const periodArray = ticks.slice(ticks.length - 7, ticks.length);
-        const result7SMA = periodArray.reduce((acc, curr) => {
-          // if (i === period - 1) arr.splice(1); // eject early by mutating iterated copy
+        const latest7Array = ticks.slice(ticks.length - 7, ticks.length);
+        const result7SMA = latest7Array.reduce((acc, curr) => {
           return acc + parseFloat(curr[4]);
         }, 0);
         // resArray.push({ [market]: result.toFixed(2) / period });
+
+        //working on EMA
+        // ***************
+        const initial7Array = ticks.slice(0, 7);
+        const rest7Array = ticks.slice(7, ticks.length);
+        const initial30Array = ticks.slice(0, 30);
+        const rest30Array = ticks.slice(30, ticks.length);
+        //calculate first 30 SMA for initial EMA
+        const initial30EMA =
+          initial30Array.reduce((acc, curr) => {
+            return acc + parseFloat(curr[4]);
+          }, 0) / initial30Array.length;
+        const initial7EMA =
+          initial7Array.reduce((acc, curr) => {
+            return acc + parseFloat(curr[4]);
+          }, 0) / initial7Array.length;
+
+        //calculate latest EMA
+        const result30EMA = rest30Array.reduce((acc, curr) => {
+          return (parseFloat(curr[4]) - acc) * (2 / 31) + acc;
+        }, initial30EMA);
+        const result7EMA = rest7Array.reduce((acc, curr) => {
+          return (parseFloat(curr[4]) - acc) * (2 / 8) + acc;
+        }, initial7EMA);
         resArray.push({
           symbol: market,
           SMA7: (result7SMA / 7).toFixed(4),
           SMA30: (result30SMA / 30).toFixed(4),
+          EMA7: result7EMA.toFixed(4),
+          EMA30: result30EMA.toFixed(4),
         });
 
         if (resArray.length === watchlist.length) {
@@ -141,7 +168,7 @@ app.post("/callklinedata", (req, res, next) => {
         }
         // modelFunction(period, ticks);
       },
-      { limit: 30 }
+      { limit: 300 }
     );
   };
   const CookAllData = (period) => {

@@ -157,8 +157,12 @@ const Dashboard1 = () => {
             for (let property in bot) {
               // console.log(property, bot[property]);
               if (bot[property].model === "SMA") {
+                // A bullish crossover occurs when the shorter moving average
+                // crosses above the longer moving average. This is also known as a golden cross.
+                // A bearish crossover occurs when the shorter moving average crosses below the
+                // longer moving average. This is known as a dead cross.
                 if (
-                  movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.002 &&
+                  movingAverage[i].SMA7 > movingAverage[i].SMA30 * 1.003 &&
                   bot[property].status === "vacant" &&
                   bot[property].offline === false &&
                   assignedJob[property] === false &&
@@ -175,7 +179,7 @@ const Dashboard1 = () => {
                   bot[property].offline === false &&
                   assignedJob[property] === false
                 ) {
-                  if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 0.998) {
+                  if (movingAverage[i].SMA7 < movingAverage[i].SMA30 * 0.997) {
                     assignedJob[property] = true;
                     await placeOrder(movingAverage[i].symbol, "sell", property);
                     break;
@@ -225,7 +229,47 @@ const Dashboard1 = () => {
                     assignedJob[property] = true;
                     await placeOrder(movingAverage[i].symbol, "sell", property);
                     break;
-                  }
+                  } else if (bot[property].model === "EMA") { //EMA start here
+                    // A bullish crossover occurs when the shorter moving average
+                    // crosses above the longer moving average. This is also known as a golden cross.
+                    // A bearish crossover occurs when the shorter moving average crosses below the
+                    // longer moving average. This is known as a dead cross.
+                    if (
+                      movingAverage[i].EMA7 > movingAverage[i].EMA30 * 1.003 &&
+                      bot[property].status === "vacant" &&
+                      bot[property].offline === false &&
+                      assignedJob[property] === false &&
+                      pause === false
+                    ) {
+                      assignedJob[property] = true;
+                      await placeOrder(
+                        movingAverage[i].symbol,
+                        "buy",
+                        property
+                      );
+                      break;
+                    }
+                    if (
+                      //sell order
+                      bot[property].status === "occupied" &&
+                      movingAverage[i].symbol === bot[property].holding &&
+                      bot[property].offline === false &&
+                      assignedJob[property] === false
+                    ) {
+                      if (
+                        movingAverage[i].EMA7 <
+                        movingAverage[i].EMA30 * 0.997
+                      ) {
+                        assignedJob[property] = true;
+                        await placeOrder(
+                          movingAverage[i].symbol,
+                          "sell",
+                          property
+                        );
+                        break;
+                      }
+                    }
+                  } //end EMA condition
                 }
               }
               //end if condition for managing bots
