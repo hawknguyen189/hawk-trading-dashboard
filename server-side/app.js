@@ -7,6 +7,7 @@ const Binance = require("node-binance-api");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var whaleRouter = require("./routes/whalehunter");
 let utilFunction = require("./utils/HelpfulFunction");
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/whalehunter", whaleRouter);
 
 app.use("/binance", (req, res, next) => {
   console.log("start new app use for bitcoin only");

@@ -6,12 +6,15 @@ import * as serviceWorker from "./serviceWorker";
 import CoinContextProvider from "./Containers/Context/CoinContext";
 import BotContextProvider from "./Containers/Context/BotContext";
 import UserAccountProvider from "./Containers/Context/UserAccount";
+import WhaleContextContext from "./Containers/Context/WhaleContext";
 
 ReactDOM.render(
   <UserAccountProvider>
     <CoinContextProvider>
       <BotContextProvider>
-        <App />
+        <WhaleContextContext>
+          <App />
+        </WhaleContextContext>
       </BotContextProvider>
     </CoinContextProvider>
   </UserAccountProvider>,

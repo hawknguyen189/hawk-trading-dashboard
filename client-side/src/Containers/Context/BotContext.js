@@ -37,8 +37,18 @@ const BotContextProvider = ({ children }) => {
     ? JSON.parse(localStorage.getItem("btcwatchdog"))
     : {
         btcwatchdog: {
-          status: "scouting",
-          fund: 666,
+          status: "vacant",
+          fund: 1000,
+          offline: false,
+          model: "WATCHDOG",
+        },
+      };
+  const ethWatchdog = localStorage.getItem("ethwatchdog")
+    ? JSON.parse(localStorage.getItem("ethwatchdog"))
+    : {
+        ethwatchdog: {
+          status: "vacant",
+          fund: 1000,
           offline: false,
           model: "WATCHDOG",
         },
@@ -49,6 +59,7 @@ const BotContextProvider = ({ children }) => {
     ...localHawk,
     ...localSusi,
     ...btcWatchdog,
+    ...ethWatchdog,
   };
   const [bot, setBot] = useState(initialState);
   const [pause, setPause] = useState(false);

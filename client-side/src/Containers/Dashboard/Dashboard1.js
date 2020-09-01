@@ -129,7 +129,7 @@ const Dashboard1 = () => {
           let assignedJob = {};
           botArray.forEach((e) => (assignedJob[e] = false));
 
-          const btcWatchDog = (() => {
+          const btcWatchDog = (async () => {
             //btc watchdog function will run automatiacally
             const btcMA = movingAverage.find((e) => e.symbol === "BTCUSDT");
             //setting up watch dog bitcoin
@@ -150,6 +150,55 @@ const Dashboard1 = () => {
             ) {
               console.log("unpause all coins");
               setPause(false);
+            }
+            if (
+              btcMA.EMA7 > btcMA.EMA30 * 1.003 &&
+              bot["btcwatchdog"].status === "vacant" &&
+              bot["btcwatchdog"].offline === false &&
+              assignedJob["btcwatchdog"] === false &&
+              pause === false
+            ) {
+              assignedJob["btcwatchdog"] = true;
+              await placeOrder(btcMA.symbol, "buy", "btcwatchdog");
+            }
+            if (
+              //sell order
+              bot["btcwatchdog"].status === "occupied" &&
+              btcMA.symbol === bot["btcwatchdog"].holding &&
+              bot["btcwatchdog"].offline === false &&
+              assignedJob["btcwatchdog"] === false
+            ) {
+              if (btcMA.EMA7 < btcMA.SMA30 * 0.997) {
+                assignedJob["btcwatchdog"] = true;
+                await placeOrder(btcMA.symbol, "sell", "btcwatchdog");
+              }
+            }
+          })();
+
+          const ethWatchDog = (async () => {
+            //btc watchdog function will run automatiacally
+            const ethMA = movingAverage.find((e) => e.symbol === "ETHUSDT");
+            if (
+              ethMA.EMA7 > ethMA.EMA30 * 1.003 &&
+              bot["ethwatchdog"].status === "vacant" &&
+              bot["ethwatchdog"].offline === false &&
+              assignedJob["ethwatchdog"] === false &&
+              pause === false
+            ) {
+              assignedJob["ethwatchdog"] = true;
+              await placeOrder(ethMA.symbol, "buy", "ethwatchdog");
+            }
+            if (
+              //sell order
+              bot["ethwatchdog"].status === "occupied" &&
+              ethMA.symbol === bot["ethwatchdog"].holding &&
+              bot["ethwatchdog"].offline === false &&
+              assignedJob["ethwatchdog"] === false
+            ) {
+              if (ethMA.EMA7 < ethMA.SMA30 * 0.997) {
+                assignedJob["ethwatchdog"] = true;
+                await placeOrder(ethMA.symbol, "sell", "ethwatchdog");
+              }
             }
           })();
 
@@ -308,6 +357,10 @@ const Dashboard1 = () => {
             <OmniBot botName="bothawk" stylist="small-box bg-info"></OmniBot>
             <OmniBot botName="botsusi" stylist="small-box bg-warning"></OmniBot>
             <OmniBot botName="botkiwi" stylist="small-box bg-success"></OmniBot>
+            <OmniBot
+              botName="ethwatchdog"
+              stylist="small-box bg-success"
+            ></OmniBot>
             <OmniBot
               botName="btcwatchdog"
               stylist="small-box bg-danger"
