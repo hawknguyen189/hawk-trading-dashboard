@@ -234,6 +234,53 @@ const Dashboard1 = () => {
                     break;
                   }
                 }
+              } else if (bot[property].model === "EMAp") {
+                if (
+                  movingAverage[i].EMA5 > movingAverage[i].EMA30p * 1.003 &&
+                  bot[property].status === "vacant" &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  assignedJob[property] = true;
+                  await placeOrder(movingAverage[i].symbol, "buy", property);
+                  break;
+                }
+                if (
+                  bot[property].status === "occupied" &&
+                  movingAverage[i].symbol === bot[property].holding &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  if (movingAverage[i].EMA5 < movingAverage[i].EMA30p * 1.003) {
+                    assignedJob[property] = true;
+                    await placeOrder(movingAverage[i].symbol, "sell", property);
+                    break;
+                  }
+                }
+              } else if (bot[property].model === "SMLMA") {
+                if (
+                  movingAverage[i].SMA5 > movingAverage[i].SMA10 * 1.0015 &&
+                  movingAverage[i].SMA10 > movingAverage[i].SMA30 * 1.0015 &&
+                  bot[property].status === "vacant" &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  assignedJob[property] = true;
+                  await placeOrder(movingAverage[i].symbol, "buy", property);
+                  break;
+                }
+                if (
+                  bot[property].status === "occupied" &&
+                  movingAverage[i].symbol === bot[property].holding &&
+                  bot[property].offline === false &&
+                  assignedJob[property] === false
+                ) {
+                  if (movingAverage[i].SMA5 < movingAverage[i].SMA10 * 1.0015) {
+                    assignedJob[property] = true;
+                    await placeOrder(movingAverage[i].symbol, "sell", property);
+                    break;
+                  }
+                }
               } else if (bot[property].model === "SPOTMA") {
                 //setting condition for Spot price vs MA (Price Crossovers)
                 //The longer moving average sets the tone for the bigger trend and the
@@ -354,9 +401,18 @@ const Dashboard1 = () => {
           {/* Small boxes (Stat box) */}
           <div className="row">
             {/* small box */}
-            <OmniBot botName="bothawk" stylist="small-box bg-info"></OmniBot>
-            <OmniBot botName="botsusi" stylist="small-box bg-warning"></OmniBot>
-            <OmniBot botName="botkiwi" stylist="small-box bg-success"></OmniBot>
+            <OmniBot botName="botkiwi" stylist="small-box bg-info"></OmniBot>
+            <OmniBot botName="bothawk" stylist="small-box bg-warning"></OmniBot>
+            <OmniBot botName="botsusi" stylist="small-box bg-success"></OmniBot>
+          </div>
+          <div className="row">
+            {/* small box */}
+            <OmniBot botName="bothao" stylist="small-box bg-info"></OmniBot>
+            <OmniBot botName="botmilo" stylist="small-box bg-warning"></OmniBot>
+            <OmniBot botName="botceci" stylist="small-box bg-success"></OmniBot>
+          </div>
+          <div className="row">
+            {/* small box */}
             <OmniBot
               botName="ethwatchdog"
               stylist="small-box bg-success"
