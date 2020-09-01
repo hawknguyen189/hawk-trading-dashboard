@@ -23,7 +23,10 @@ const Dashboard2 = () => {
       console.log("check whale balance error is ", e);
     }
   };
-
+  const handleTransaction = async (event) => {
+    event.preventDefault();
+    const endpoint = "whalehunter/retrievetransaction";
+  };
   return (
     <div className="content-wrapper">
       {/* Content Header (Page header) */}

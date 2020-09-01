@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-const ControlPanel = ({ handleScan, whale }) => {
+const ControlPanel = ({ handleScan, whale, handleTransaction }) => {
   const [copySuccess, setCopySuccess] = useState("");
   //   const textAreaRef = useRef(null);
   //   const copyToClipboard = (e) => {
@@ -24,7 +24,7 @@ const ControlPanel = ({ handleScan, whale }) => {
                 <th scope="col">Address</th>
                 <th scope="col">Balance</th>
                 <th scope="col">Current Price</th>
-                <th scope="col">Average Price</th>
+                <th scope="col">Avg Buy Price</th>
                 <th scope="col">Total Value</th>
               </tr>
             </thead>
@@ -37,7 +37,7 @@ const ControlPanel = ({ handleScan, whale }) => {
                       <td>{e.name}</td>
                       <td scope="col" className="overflow-hidden">
                         <a
-                          href={`https://etherscan.io/address/${e.address}`}
+                          href={`https://etherscan.io/token/${e.address}`}
                           target="_blank"
                           rel="noreferrer noopener"
                         >
@@ -69,6 +69,9 @@ const ControlPanel = ({ handleScan, whale }) => {
         <div className="card-pane-right bg-success pt-2 pb-2 pl-4 pr-4">
           <button className="btn btn-primary" onClick={handleScan}>
             Scan Address
+          </button>
+          <button className="btn btn-primary" onClick={handleTransaction}>
+            Get Transactions
           </button>
         </div>
         {/* /.card-pane-right */}
