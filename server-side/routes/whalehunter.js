@@ -4,35 +4,13 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 dotenv.config();
 const api = require("etherscan-api").init(process.env.ETHERSCAN_API);
-const Decimal = require("decimal.js");
+const { getFormattedTokenBalance } = require("../utils/HelpfulFunction");
 /* GET home page. */
 router.get("/balance", function (req, res, next) {
   console.log("whale balance ");
   const checkAddress = "0x39979745B166572c25b4c7e4e0939c9298EFE79D";
   const endpoint = `https://api.ethplorer.io/getAddressInfo/${checkAddress}?apiKey=${process.env.ETHER_EXPLORER_API}`;
   let addressInfo = [];
-  function getFormattedTokenBalance(tokenData) {
-    // const num = new Decimal(tokenData.balance).toFixed();
-    // const decimalPos = num.length - tokenData.tokenInfo.decimals;
-    // const formattedBalance = `${num.slice(0, decimalPos)}.${num.slice(
-    //   decimalPos
-    // )}`;
-    // return formattedBalance;
-    const num = new Decimal(tokenData.balance).toFixed();
-    const decimalPos = num.length - tokenData.tokenInfo.decimals;
-    let formattedBalance;
-    if (decimalPos >= 0) {
-      formattedBalance = `${num.slice(0, decimalPos)}.${num.slice(decimalPos)}`;
-    } else {
-      //for small amount
-      let initialNum = "0.";
-      for (let i = 0; i <= decimalPos; i--) {
-        initialNum.concat("0");
-      }
-      formattedBalance = `${initialNum}${num}`;
-    }
-    return formattedBalance;
-  }
   axios
     .get(endpoint)
     .then((response) => {
@@ -72,5 +50,18 @@ router.get("/balance", function (req, res, next) {
       console.log(error);
     });
 });
-
+router.get("/retrievetransaction", function (req, res, next) {
+  console.log("recent transactions ");
+  const checkAddress = "0x39979745B166572c25b4c7e4e0939c9298EFE79D";
+  const endpoint = `https://api.ethplorer.io/getAddressHistory/${checkAddress}?apiKey=${process.env.ETHER_EXPLORER_API}&type=transfer`;
+  axios
+    .get(endpoint)
+    .then((response) => {
+      const responseArray = [...response.data.operations];
+      res.json(responseArray);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
 module.exports = router;

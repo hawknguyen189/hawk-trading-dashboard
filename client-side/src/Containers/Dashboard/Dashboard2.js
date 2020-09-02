@@ -5,6 +5,7 @@ import TopBar from "../../Conponents/EtherScan/TopBar";
 
 const Dashboard2 = () => {
   const { whale, setWhale } = useContext(WhaleContext);
+  const { transaction, setTransaction } = useContext(WhaleContext);
   const checkBalance = async (event) => {
     event.preventDefault();
     console.log("foo");
@@ -26,6 +27,18 @@ const Dashboard2 = () => {
   const handleTransaction = async (event) => {
     event.preventDefault();
     const endpoint = "whalehunter/retrievetransaction";
+    try {
+      let response = await fetch(`/${endpoint}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const jsonResponse = await response.json();
+        console.log(jsonResponse);
+      }
+    } catch (e) {
+      console.log("retrieve transactions error is ", e);
+    }
   };
   return (
     <div className="content-wrapper">
@@ -86,6 +99,7 @@ const Dashboard2 = () => {
                 <ControlPanel
                   handleScan={checkBalance}
                   whale={whale}
+                  handleTransaction={handleTransaction}
                 ></ControlPanel>
                 {/* /.card-body */}
               </div>

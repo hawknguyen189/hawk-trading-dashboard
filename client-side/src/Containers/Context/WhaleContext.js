@@ -4,12 +4,15 @@ export const WhaleContext = createContext();
 
 const WhaleContextProvider = ({ children }) => {
   const [whale, setWhale] = useState([]);
+  const [transaction, setTransaction] = useState([]);
   const contextValues = useMemo(
     () => ({
       whale,
       setWhale,
+      transaction,
+      setTransaction,
     }),
-    [whale]
+    [whale, transaction]
   );
   return (
     <WhaleContext.Provider value={contextValues}>
