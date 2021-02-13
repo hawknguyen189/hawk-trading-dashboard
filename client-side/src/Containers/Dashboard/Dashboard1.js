@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useCallback } from "react";
 // import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
 // import Dashboard1Data from "./Data/Dashboard1Data";
 import ConnectPanel from "../../Conponents/ConnectBinance/ConnectPanel";
@@ -7,7 +7,7 @@ import MainSection from "../../Conponents/ConnectBinance/MainSection";
 import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
 import BotController from "../../Conponents/ConnectBinance/BotController";
 import { CoinContext } from "../Context/CoinContext";
-import { ControlContext } from "../Context/ControlContext";
+import { BinanceContext } from "../Context/BinanceContext";
 import { BotContext } from "../Context/BotContext";
 import { useIsMountedRef } from "../Utils/CustomHook";
 
@@ -18,7 +18,7 @@ const Dashboard1 = () => {
     localStorage.setItem(botName, JSON.stringify({ [botName]: order }));
   };
 
-  const { runInterval } = useContext(ControlContext);
+  const { runInterval, callKlineData } = useContext(BinanceContext);
   const { watchlist } = useContext(CoinContext);
   const { movingAverage, setMovingAverage } = useContext(CoinContext);
   const { coin, setCoin } = useContext(CoinContext);
@@ -26,32 +26,7 @@ const Dashboard1 = () => {
 
   useEffect(() => {
     if (isMountedRef.current) {
-      const callKlineData = async () => {
-        const endpoint = "callklinedata";
-        if (watchlist) {
-          try {
-            let response = await fetch(`/${endpoint}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: JSON.stringify(watchlist), // body data type must match "Content-Type" header
-            });
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            } else {
-              const jsonResponse = await response.json();
-              // const resultParse = JSON.parse(jsonResponse);
-              console.log("kline ", jsonResponse);
-              setMovingAverage(jsonResponse);
-            }
-          } catch (e) {
-            console.log("calling kline/candlestick error ", e);
-          }
-        }
-      };
+      // calling a function from BinanceContext using react useCallback
       callKlineData();
       let interval;
       if (runInterval) {

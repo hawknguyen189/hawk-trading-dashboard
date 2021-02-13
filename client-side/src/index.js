@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import ControlContextProvider from "./Containers/Context/ControlContext";
+import BinanceContextProvider from "./Containers/Context/BinanceContext";
 import CoinContextProvider from "./Containers/Context/CoinContext";
 import BotContextProvider from "./Containers/Context/BotContext";
 import UserAccountProvider from "./Containers/Context/UserAccount";
@@ -11,15 +11,15 @@ import WhaleContextContext from "./Containers/Context/WhaleContext";
 
 ReactDOM.render(
   <UserAccountProvider>
-    <ControlContextProvider>
-      <CoinContextProvider>
-        <BotContextProvider>
+    <CoinContextProvider>
+      <BotContextProvider>
+        <BinanceContextProvider>
           <WhaleContextContext>
             <App />
           </WhaleContextContext>
-        </BotContextProvider>
-      </CoinContextProvider>
-    </ControlContextProvider>
+        </BinanceContextProvider>
+      </BotContextProvider>
+    </CoinContextProvider>
   </UserAccountProvider>,
   document.getElementById("root")
 );

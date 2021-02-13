@@ -1,12 +1,14 @@
-import React, { useContext, useEffect } from "react";
-import { ControlContext } from "../../Containers/Context/ControlContext";
+import React, { useContext, useEffect, useState } from "react";
+import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 import { BotContext } from "../../Containers/Context/BotContext";
 
 const MainControl = () => {
-  const { runInterval, setRunInterval } = useContext(ControlContext);
+  const { runInterval, setRunInterval } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
   const { bot, setBot } = useContext(BotContext);
+  const [runTrailing, setRunTrailing] = useState(false);
+  const [runBot, setRunBot] = useState(false);
 
   const controlInterval = (e) => {
     e.preventDefault();
@@ -19,9 +21,15 @@ const MainControl = () => {
   const controlTraling = (e) => {
     e.preventDefault();
     if (e.target.innerHTML.toUpperCase() === "ON") {
-      //   setRunInterval(true);
+      // get down & up price & convert to number
+      const downValue = parseFloat(document.getElementById("downValue").value);
+      const upValue = parseFloat(document.getElementById("upValue").value);
+      console.log(downValue, upValue);
+      setRunTrailing(true);
+
+      
     } else {
-      //   setRunInterval(false);
+      setRunTrailing(false);
     }
   };
   const controlBots = (e) => {
@@ -42,6 +50,7 @@ const MainControl = () => {
           }));
         }
       }
+      setRunBot(true);
     } else {
       if (runInterval) {
         setRunInterval(false);
@@ -57,6 +66,7 @@ const MainControl = () => {
             },
           }));
         }
+        setRunBot(false);
       }
     }
   };
@@ -91,7 +101,7 @@ const MainControl = () => {
           </button>
         </div>
         <div className="col-sm">
-          <p>{runInterval ? "BOTs On" : "BOTs Off"} </p>
+          <p>{runBot ? "BOTs On" : "BOTs Off"} </p>
         </div>
       </div>
       <div className="row border border-info rounded">
@@ -110,7 +120,7 @@ const MainControl = () => {
             </button>
           </div>
           <div className="col-sm  d-flex justify-content-center">
-            <p>{runInterval ? "Trailing Stop On" : "Trailing Stop Off"} </p>
+            <p>{runTrailing ? "Trailing Stop On" : "Trailing Stop Off"} </p>
           </div>
         </div>
         {/* input up and down price for the trailing stop  */}
@@ -121,8 +131,10 @@ const MainControl = () => {
             </div>
             <input
               type="number"
+              id="downValue"
               className="form-control"
               aria-label="Amount (to the nearest dollar)"
+              defaultValue="10"
             />
             <div className="input-group-append">
               <span className="input-group-text">%</span>
@@ -134,8 +146,10 @@ const MainControl = () => {
             </div>
             <input
               type="number"
+              id="upValue"
               className="form-control"
               aria-label="Amount (to the nearest dollar)"
+              defaultValue="5"
             />
             <div className="input-group-append">
               <span className="input-group-text">%</span>

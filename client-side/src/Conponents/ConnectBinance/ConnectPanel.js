@@ -1,70 +1,19 @@
 import React, { useContext, useEffect } from "react";
 import { UserAccount } from "../../Containers/Context/UserAccount";
 import { CoinContext } from "../../Containers/Context/CoinContext";
-import { ControlContext } from "../../Containers/Context/ControlContext";
+import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const ConnectPanel = () => {
-  const { balance, setBalance } = useContext(UserAccount);
-  const { coin, setCoin } = useContext(CoinContext);
-  const { runInterval } = useContext(ControlContext);
+  const { balance } = useContext(UserAccount);
+  const { coin } = useContext(CoinContext);
+  const { runInterval, callAccountBalance, callCheckPrice } = useContext(
+    BinanceContext
+  );
   const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
     if (isMountedRef.current) {
-      const callAccountBalance = async () => {
-        console.log("call account balance ");
-        const endpoint = "callaccountbalance";
-        try {
-          let response = await fetch(`/${endpoint}`);
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          } else {
-            const jsonResponse = await response.json();
-            // const resultParse = JSON.parse(jsonResponse);
-            let mainBalance = [];
-            for (let property in jsonResponse) {
-              // console.log(parseInt(jsonResponse[property]["onOrder"]));
-              if (
-                parseInt(jsonResponse[property]["available"]) > 0 ||
-                parseInt(jsonResponse[property]["onOrder"]) > 0
-              ) {
-                mainBalance.push({
-                  symbol: property,
-                  ...jsonResponse[property],
-                });
-              }
-            }
-            setBalance(mainBalance);
-          }
-        } catch (e) {
-          console.log("calling account balance error ", e);
-        }
-      };
-      const callCheckPrice = async () => {
-        // console.log("call check price")
-        const endpoint = "callcheckprice";
-        try {
-          let response = await fetch(`/${endpoint}`);
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          } else {
-            const jsonResponse = await response.json();
-            // const resultParse = JSON.parse(jsonResponse);
-            // let allPrice = [];
-            // for (let property in jsonResponse) {
-            //   // console.log(parseInt(jsonResponse[property]["onOrder"]));
-            //   allPrice.push(property);
-            // }
-            // console.log("all price ", allPrice);
-            setCoin(jsonResponse);
-          }
-        } catch (e) {
-          console.log("calling check all price error ", e);
-        }
-      };
       // return () => {
       callAccountBalance();
       callCheckPrice();

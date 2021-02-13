@@ -2,63 +2,23 @@ import React, { useEffect, useContext, useState } from "react";
 import { CoinContext } from "../../Containers/Context/CoinContext";
 import "../../Containers/Utils/style.scss";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
-import { ControlContext } from "../../Containers/Context/ControlContext";
+import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { BotContext } from "../../Containers/Context/BotContext";
 
 const MainSection = () => {
   const { watchlist, setWatchlist } = useContext(CoinContext);
   const { bot } = useContext(BotContext);
-  const { runInterval } = useContext(ControlContext);
+  const { runInterval, callWatchlist } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
     if (isMountedRef.current) {
-      const callWatchlist = async () => {
-        console.log("inside watchlist call");
-        const endpoint = "callwatchlist";
-        try {
-          let response = await fetch(`/${endpoint}`);
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          } else {
-            const jsonResponse = await response.json();
-            const listUSDT = jsonResponse.filter((e) =>
-              e.symbol.includes("USDT", 1)
-            );
-            const descListUSDT = listUSDT.sort(
-              (a, b) => b.quoteVolume - a.quoteVolume
-            );
-            const top10List = descListUSDT.slice(0, 10);
-            //add check function to add holding pair in case out of top 10 vol
-            if (bot) {
-              const holdingList = [];
-              for (let property in bot) {
-                if (bot[property].holding) {
-                  const getHoldingData = descListUSDT.find(
-                    (e) => e.symbol === bot[property].holding
-                  );
-                  const checktop10List = top10List.find(
-                    (e) => e.symbol === getHoldingData.symbol
-                  );
-                  if (!checktop10List) {
-                    top10List.push(getHoldingData);
-                  }
-                }
-              }
-            }
-            //finish adding holding pair
-            setWatchlist(top10List);
-          }
-        } catch (e) {
-          console.log("calling binnance error ", e);
-        }
-      };
+      // calling a function from BinanceContext using react useCallback
       callWatchlist();
       let interval;
       if (runInterval) {
         interval = setInterval(() => {
-          console.log("calling watchlist inside interval")
+          console.log("calling watchlist inside interval");
           callWatchlist();
         }, 900000);
         return () => clearInterval(interval);
