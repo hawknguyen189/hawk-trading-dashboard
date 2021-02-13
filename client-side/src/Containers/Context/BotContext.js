@@ -19,7 +19,7 @@ const BotContextProvider = ({ children }) => {
         bothawk: {
           status: "vacant",
           fund: 1000,
-          offline: false,
+          offline: true,
           model: "SPOTMA",
         },
       };
@@ -29,7 +29,7 @@ const BotContextProvider = ({ children }) => {
         botsusi: {
           status: "vacant",
           fund: 1000,
-          offline: false,
+          offline: true,
           model: "EMA",
         },
       };
@@ -39,7 +39,7 @@ const BotContextProvider = ({ children }) => {
         btcwatchdog: {
           status: "vacant",
           fund: 1000,
-          offline: false,
+          offline: true,
           model: "WATCHDOG",
         },
       };
@@ -49,19 +49,18 @@ const BotContextProvider = ({ children }) => {
         ethwatchdog: {
           status: "vacant",
           fund: 1000,
-          offline: false,
+          offline: true,
           model: "WATCHDOG",
-          offline: false,
-          model:"SMLMA"
+          model: "SMLMA",
         },
       };
   const localHao = localStorage.getItem("bothao")
     ? JSON.parse(localStorage.getItem("bothao"))
     : {
-      bothao: {
+        bothao: {
           status: "vacant",
           fund: 1000,
-          offline: false,
+          offline: true,
           model: "EMAp",
         },
       };
@@ -71,8 +70,8 @@ const BotContextProvider = ({ children }) => {
         botmilo: {
           status: "vacant",
           fund: 1000,
-          offline: false,
-          model:"RM"
+          offline: true,
+          model: "RM",
         },
       };
   const localCeci = localStorage.getItem("botceci")
@@ -81,8 +80,8 @@ const BotContextProvider = ({ children }) => {
         botceci: {
           status: "vacant",
           fund: 1000,
-          offline: false,
-          model:"RD"
+          offline: true,
+          model: "RD",
         },
       };
 

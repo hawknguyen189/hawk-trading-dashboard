@@ -2,13 +2,15 @@ import React, { useEffect, useContext, useState } from "react";
 import { CoinContext } from "../../Containers/Context/CoinContext";
 import "../../Containers/Utils/style.scss";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
+import { ControlContext } from "../../Containers/Context/ControlContext";
 import { BotContext } from "../../Containers/Context/BotContext";
 
 const MainSection = () => {
   const { watchlist, setWatchlist } = useContext(CoinContext);
   const { bot } = useContext(BotContext);
+  const { runInterval } = useContext(ControlContext);
   const isMountedRef = useIsMountedRef();
-  
+
   useEffect(() => {
     if (isMountedRef.current) {
       const callWatchlist = async () => {
@@ -53,12 +55,20 @@ const MainSection = () => {
         }
       };
       callWatchlist();
-      const interval = setInterval(() => {
-        callWatchlist();
-      }, 900000);
-      return () => clearInterval(interval);
+      let interval;
+      if (runInterval) {
+        interval = setInterval(() => {
+          console.log("calling watchlist inside interval")
+          callWatchlist();
+        }, 900000);
+        return () => clearInterval(interval);
+      } else {
+        if (interval) {
+          clearInterval(interval);
+        }
+      }
     }
-  }, [bot, isMountedRef]);
+  }, [bot, isMountedRef, runInterval]);
 
   return (
     <section className="col-lg-8 connectedSortable">
@@ -123,7 +133,8 @@ const MainSection = () => {
                       >
                         {new Intl.NumberFormat("en-US").format(
                           e.priceChangePercent
-                        )}
+                        )}{" "}
+                        %
                       </td>
                       <td>
                         {new Intl.NumberFormat("en-US", {

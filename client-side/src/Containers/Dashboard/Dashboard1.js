@@ -2,10 +2,12 @@ import React, { useEffect, useContext } from "react";
 // import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
 // import Dashboard1Data from "./Data/Dashboard1Data";
 import ConnectPanel from "../../Conponents/ConnectBinance/ConnectPanel";
+import MainControl from "../../Conponents/ConnectBinance/MainControl";
 import MainSection from "../../Conponents/ConnectBinance/MainSection";
 import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
 import BotController from "../../Conponents/ConnectBinance/BotController";
 import { CoinContext } from "../Context/CoinContext";
+import { ControlContext } from "../Context/ControlContext";
 import { BotContext } from "../Context/BotContext";
 import { useIsMountedRef } from "../Utils/CustomHook";
 
@@ -16,6 +18,7 @@ const Dashboard1 = () => {
     localStorage.setItem(botName, JSON.stringify({ [botName]: order }));
   };
 
+  const { runInterval } = useContext(ControlContext);
   const { watchlist } = useContext(CoinContext);
   const { movingAverage, setMovingAverage } = useContext(CoinContext);
   const { coin, setCoin } = useContext(CoinContext);
@@ -50,12 +53,19 @@ const Dashboard1 = () => {
         }
       };
       callKlineData();
-      const interval = setInterval(() => {
-        callKlineData();
-      }, 10000);
-      return () => clearInterval(interval);
+      let interval;
+      if (runInterval) {
+        interval = setInterval(() => {
+          callKlineData();
+        }, 10000);
+        return () => clearInterval(interval);
+      } else {
+        if (interval) {
+          clearInterval(interval);
+        }
+      }
     }
-  }, [watchlist, isMountedRef]);
+  }, [watchlist, isMountedRef, runInterval]);
 
   useEffect(() => {
     const placeOrder = async (symbol, action, botName) => {
@@ -400,31 +410,24 @@ const Dashboard1 = () => {
         <div className="container-fluid">
           {/* Small boxes (Stat box) */}
           <div className="row">
-            {/* small box */}
-            <OmniBot botName="botkiwi" stylist="small-box bg-info"></OmniBot>
-            <OmniBot botName="bothawk" stylist="small-box bg-warning"></OmniBot>
-            <OmniBot botName="botsusi" stylist="small-box bg-success"></OmniBot>
-          </div>
-          <div className="row">
-            {/* small box */}
-            <OmniBot botName="bothao" stylist="small-box bg-info"></OmniBot>
-            <OmniBot botName="botmilo" stylist="small-box bg-warning"></OmniBot>
-            <OmniBot botName="botceci" stylist="small-box bg-success"></OmniBot>
-          </div>
-          <div className="row">
-            {/* small box */}
-            <OmniBot
-              botName="ethwatchdog"
-              stylist="small-box bg-success"
-            ></OmniBot>
-            <OmniBot
-              botName="btcwatchdog"
-              stylist="small-box bg-danger"
-            ></OmniBot>
-            {/* <BotController
-              botName="Controller"
-              stylist="small-box bg-danger"
-            ></BotController> */}
+            <div className="col-sm-9">
+              <div className="row d-flex justify-content-center">
+                {/* small box */}
+                <OmniBot
+                  botName="botkiwi"
+                  stylist="small-box bg-info"
+                ></OmniBot>
+                <OmniBot
+                  botName="bothawk"
+                  stylist="small-box bg-warning"
+                ></OmniBot>
+                <OmniBot
+                  botName="botsusi"
+                  stylist="small-box bg-success"
+                ></OmniBot>
+              </div>
+            </div>
+            <MainControl></MainControl>
           </div>
           {/* /.row */}
           {/* Main row */}

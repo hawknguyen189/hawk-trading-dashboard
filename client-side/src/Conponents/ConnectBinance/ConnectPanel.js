@@ -1,11 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { UserAccount } from "../../Containers/Context/UserAccount";
 import { CoinContext } from "../../Containers/Context/CoinContext";
+import { ControlContext } from "../../Containers/Context/ControlContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const ConnectPanel = () => {
   const { balance, setBalance } = useContext(UserAccount);
   const { coin, setCoin } = useContext(CoinContext);
+  const { runInterval } = useContext(ControlContext);
   const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
@@ -66,12 +68,19 @@ const ConnectPanel = () => {
       // return () => {
       callAccountBalance();
       callCheckPrice();
-      const interval = setInterval(() => {
-        callCheckPrice();
-      }, 2500);
-      return () => clearInterval(interval);
+      let interval;
+      if (runInterval) {
+        interval = setInterval(() => {
+          callCheckPrice();
+        }, 2500);
+        return () => clearInterval(interval);
+      } else {
+        if (interval) {
+          clearInterval(interval);
+        }
+      }
     }
-  }, [isMountedRef]);
+  }, [isMountedRef, runInterval]);
   return (
     <section className="col-lg-4 connectedSortable">
       {/* Map card */}
