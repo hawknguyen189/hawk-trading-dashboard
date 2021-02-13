@@ -4,11 +4,21 @@ import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 import { BotContext } from "../../Containers/Context/BotContext";
 
 const MainControl = () => {
-  const { runInterval, setRunInterval } = useContext(BinanceContext);
+  const {
+    runInterval,
+    setRunInterval,
+    callKlineData,
+    callWatchlist,
+    callAccountBalance,
+    callCheckPrice,
+  } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
   const { bot, setBot } = useContext(BotContext);
   const [runTrailing, setRunTrailing] = useState(false);
   const [runBot, setRunBot] = useState(false);
+  const [update, setUpdate] = useState(
+    new Date().toLocaleString("en-US", { timeZone: "EST" })
+  );
 
   const controlInterval = (e) => {
     e.preventDefault();
@@ -26,8 +36,6 @@ const MainControl = () => {
       const upValue = parseFloat(document.getElementById("upValue").value);
       console.log(downValue, upValue);
       setRunTrailing(true);
-
-      
     } else {
       setRunTrailing(false);
     }
@@ -70,8 +78,17 @@ const MainControl = () => {
       }
     }
   };
+  const controlUpdate = (e) => {
+    e.preventDefault();
+    callKlineData();
+    callWatchlist();
+    callAccountBalance();
+    callCheckPrice();
+    setUpdate(new Date().toLocaleString("en-US", { timeZone: "EST" }));
+  };
   return (
     <section className="main-control col-sm container">
+      {/* turn on interval  */}
       <div className="row border border-info rounded">
         <div className="col-sm">
           <p>Run Interval</p>
@@ -88,6 +105,7 @@ const MainControl = () => {
           <p>{runInterval ? "Interval On" : "Interval Off"} </p>
         </div>
       </div>
+      {/* switch on bots */}
       <div className="row border border-info rounded">
         <div className="col-sm">
           <p>Activate BOTs</p>
@@ -104,6 +122,21 @@ const MainControl = () => {
           <p>{runBot ? "BOTs On" : "BOTs Off"} </p>
         </div>
       </div>
+      {/* Update all data  */}
+      <div className="row border border-info rounded">
+        <div className="col-sm">
+          <p>Update All Data</p>
+        </div>
+        <div className="col-sm">
+          <button className="btn btn-primary" onClick={controlUpdate}>
+            Update
+          </button>
+        </div>
+        <div className="col-sm">
+          <p>Lastest Update is: {update}</p>
+        </div>
+      </div>
+      {/* traling stop */}
       <div className="row border border-info rounded">
         <div className="container">
           <div className="text-center">
