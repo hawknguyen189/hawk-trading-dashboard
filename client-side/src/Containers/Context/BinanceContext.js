@@ -28,7 +28,7 @@ const BinanceContextProvider = ({ children }) => {
     const endpoint = "callklinedata";
     if (watchlist.length) {
       try {
-        let response = await fetch(`/${endpoint}`, {
+        let response = await fetch(`/binance/${endpoint}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -55,7 +55,7 @@ const BinanceContextProvider = ({ children }) => {
     console.log("inside watchlist call");
     const endpoint = "callwatchlist";
     try {
-      let response = await fetch(`/${endpoint}`);
+      let response = await fetch(`/binance/${endpoint}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -96,7 +96,7 @@ const BinanceContextProvider = ({ children }) => {
     console.log("call account balance ");
     const endpoint = "callaccountbalance";
     try {
-      let response = await fetch(`/${endpoint}`);
+      let response = await fetch(`/binance/${endpoint}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -126,7 +126,7 @@ const BinanceContextProvider = ({ children }) => {
     // console.log("call check price")
     const endpoint = "callcheckprice";
     try {
-      let response = await fetch(`/${endpoint}`);
+      let response = await fetch(`/binance/${endpoint}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
