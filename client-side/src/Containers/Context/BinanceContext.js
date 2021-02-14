@@ -21,7 +21,7 @@ const BinanceContextProvider = ({ children }) => {
     setCoin,
   } = useContext(CoinContext);
   const { bot } = useContext(BotContext);
-  const { setBalance } = useContext(UserAccount);
+  const { balance, setBalance } = useContext(UserAccount);
 
   // use useMemo to memoise the value and refresh only when one of these values change.
   const callKlineData = useCallback(async () => {

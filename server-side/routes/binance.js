@@ -24,6 +24,30 @@ router.get("/callaccountbalance", (req, res, next) => {
   };
   checkAccountBalance();
 });
+router.post("/callpurchaseprice", (req, res, next) => {
+  const accountHolding = [...req.body];
+  const callTestOrder = async () => {
+    let resArray = [];
+    // binance.allOrders("ETHBTC", (error, orders, symbol) => {
+    //   if (error) return console.error(error);
+    //   res.json(balances);
+    // });
+    console.log(accountHolding);
+    accountHolding.forEach((e, i) => {
+      binance.trades(
+        `${accountHolding[0].symbol}USDT`,
+        (error, trades, symbol) => {
+          // console.info(symbol + " trade history", trades);
+          resArray.push({ symbol: symbol, allTrade: [...trades] });
+          if (i === accountHolding.length - 1) {
+            res.json(resArray);
+          }
+        }
+      );
+    });
+  };
+  callTestOrder();
+});
 router.get("/callwatchlist", (req, res, next) => {
   console.log("here is the watchlist call");
   // const checkAllPrice = async () => {

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 import { BotContext } from "../../Containers/Context/BotContext";
+import { UserAccount } from "../../Containers/Context/UserAccount";
 
 const MainControl = () => {
   const {
@@ -14,6 +15,7 @@ const MainControl = () => {
   } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
   const { bot, setBot } = useContext(BotContext);
+  const { balance } = useContext(UserAccount);
   const [runTrailing, setRunTrailing] = useState(false);
   const [runBot, setRunBot] = useState(false);
   const [update, setUpdate] = useState(
@@ -77,6 +79,10 @@ const MainControl = () => {
         setRunBot(false);
       }
     }
+  };
+  const testPlaceOrder = (e) => {
+    e.preventDefault();
+    console.log("calling test order");
   };
   const controlUpdate = (e) => {
     e.preventDefault();
@@ -150,6 +156,9 @@ const MainControl = () => {
             </button>
             <button className="btn btn-danger" onClick={controlTraling}>
               Off
+            </button>
+            <button className="btn btn-info" onClick={testPlaceOrder}>
+              Place Order
             </button>
           </div>
           <div className="col-sm  d-flex justify-content-center">

@@ -1,11 +1,13 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserAccount } from "../../Containers/Context/UserAccount";
 import { CoinContext } from "../../Containers/Context/CoinContext";
 import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const ConnectPanel = () => {
-  const { balance } = useContext(UserAccount);
+  const { balance, setBalance, purchasePrice, setPurchasePrice } = useContext(
+    UserAccount
+  );
   const { coin } = useContext(CoinContext);
   const { runInterval, callAccountBalance, callCheckPrice } = useContext(
     BinanceContext
@@ -30,6 +32,42 @@ const ConnectPanel = () => {
       }
     }
   }, [isMountedRef, runInterval]);
+  useEffect(() => {
+    const callPurchasePrice = async () => {
+      const endpoint = "callpurchaseprice";
+      if (balance.length) {
+        try {
+          let response = await fetch(`/binance/${endpoint}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(balance), // body data type must match "Content-Type" header
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            const jsonResponse = await response.json();
+            // const resultParse = JSON.parse(jsonResponse);
+            console.log("holding trade ", jsonResponse);
+            let tempArray = [];
+            jsonResponse.forEach((e, i) => {
+              tempArray.push({
+                symbol: e.symbol.substring(0, e.symbol.length - 4),
+                price: parseFloat(e.allTrade[e.allTrade.length - 1].price),
+              });
+            });
+            setPurchasePrice(tempArray);
+          }
+        } catch (e) {
+          console.log("calling test order error ", e);
+        }
+      }
+    };
+    callPurchasePrice();
+  }, [isMountedRef, balance]);
   return (
     <section className="col-lg-4 connectedSortable">
       {/* Map card */}
@@ -70,11 +108,24 @@ const ConnectPanel = () => {
                 <th scope="col">Available</th>
                 <th scope="col">On-Order</th>
                 <th scope="col">USD Equivalent</th>
+                <th scope="col">Purchase Price</th>
               </tr>
             </thead>
             <tbody>
               {balance &&
                 balance.map((e, index) => {
+                  let findIndex;
+                  if (purchasePrice.length) {
+                    findIndex = purchasePrice.findIndex((element) => {
+                      return element.symbol === e.symbol;
+                    });
+                    console.log("index is ", findIndex);
+                    console.log("price is ", purchasePrice[findIndex]["price"]);
+                    // if (findIndex) {
+                    //   tempBalance[index]["purchasPrice"] =
+                    //     holdingTrade[findIndex].allTrade;
+                    // }
+                  }
                   return (
                     <tr key={index}>
                       <td>{e.symbol}</td>
@@ -92,6 +143,13 @@ const ConnectPanel = () => {
                           coin[`${e.symbol}USDT`] *
                             (parseInt(e.available) + parseInt(e.onOrder))
                         )}
+                      </td>
+                      <td>
+                        {purchasePrice.length &&
+                          new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          }).format(purchasePrice[findIndex]["price"])}
                       </td>
                     </tr>
                   );
