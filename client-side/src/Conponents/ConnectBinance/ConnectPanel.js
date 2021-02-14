@@ -54,10 +54,17 @@ const ConnectPanel = () => {
             console.log("holding trade ", jsonResponse);
             let tempArray = [];
             jsonResponse.forEach((e, i) => {
-              tempArray.push({
-                symbol: e.symbol.substring(0, e.symbol.length - 4),
-                price: parseFloat(e.allTrade[e.allTrade.length - 1].price),
-              });
+              if (e.symbol.toUpperCase() === "USDT") {
+                tempArray.push({
+                  symbol: e.symbol,
+                  price: parseFloat(e.allTrade[e.allTrade.length - 1].price),
+                });
+              } else {
+                tempArray.push({
+                  symbol: e.symbol.substring(0, e.symbol.length - 4),
+                  price: parseFloat(e.allTrade[e.allTrade.length - 1].price),
+                });
+              }
             });
             setPurchasePrice(tempArray);
           }
@@ -136,20 +143,32 @@ const ConnectPanel = () => {
                         {new Intl.NumberFormat("en-US").format(e.onOrder)}
                       </td>
                       <td>
-                        {new Intl.NumberFormat("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        }).format(
-                          coin[`${e.symbol}USDT`] *
-                            (parseInt(e.available) + parseInt(e.onOrder))
-                        )}
+                        {e.symbol.toUpperCase() === "USDT"
+                          ? new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            }).format(e.available)
+                          : new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            }).format(
+                              coin[`${e.symbol}USDT`] *
+                                (parseInt(e.available) + parseInt(e.onOrder))
+                            )}
                       </td>
                       <td>
                         {purchasePrice.length &&
-                          new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                          }).format(purchasePrice[findIndex]["price"])}
+                          new Intl.NumberFormat(
+                            "en-US",
+                            {
+                              maximumFractionDigits: 5,
+                              minimumFractionDigits: 2,
+                            },
+                            {
+                              style: "currency",
+                              currency: "USD",
+                            }
+                          ).format(purchasePrice[findIndex]["price"])}
                       </td>
                     </tr>
                   );

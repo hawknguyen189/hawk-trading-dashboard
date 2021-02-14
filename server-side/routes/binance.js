@@ -34,16 +34,19 @@ router.post("/callpurchaseprice", (req, res, next) => {
     // });
     console.log(accountHolding);
     accountHolding.forEach((e, i) => {
-      binance.trades(
-        `${accountHolding[0].symbol}USDT`,
-        (error, trades, symbol) => {
+      if (e.symbol.toUpperCase() === "USDT") {
+        resArray.push({ symbol: e.symbol, allTrade: [{ price: e.available }] });
+      } else {
+        binance.trades(`${e.symbol}USDT`, (error, trades, symbol) => {
           // console.info(symbol + " trade history", trades);
-          resArray.push({ symbol: symbol, allTrade: [...trades] });
-          if (i === accountHolding.length - 1) {
-            res.json(resArray);
+          if (trades) {
+            resArray.push({ symbol: symbol, allTrade: [...trades] });
+            if (i === accountHolding.length - 1) {
+              res.json(resArray);
+            }
           }
-        }
-      );
+        });
+      }
     });
   };
   callTestOrder();
