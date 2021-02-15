@@ -31,7 +31,7 @@ const MainSection = () => {
   }, [bot, isMountedRef, runInterval]);
 
   return (
-    <section className="col-lg-8 connectedSortable">
+    <section className="col-lg-6 connectedSortable">
       {/* Custom tabs (Charts with tabs)*/}
       <div className="card">
         <div className="card-header">
@@ -69,9 +69,6 @@ const MainSection = () => {
                 <th scope="col">24h High</th>
                 <th scope="col">24h Low</th>
                 <th scope="col">24h Volume</th>
-                <th scope="col">SMA</th>
-                <th scope="col">EMA</th>
-                <th scope="col">Keltner Channels</th>
               </tr>
             </thead>
             <tbody>
@@ -93,8 +90,7 @@ const MainSection = () => {
                       >
                         {new Intl.NumberFormat("en-US").format(
                           e.priceChangePercent
-                        )}{" "}
-                        %
+                        )}%
                       </td>
                       <td>
                         {new Intl.NumberFormat("en-US", {
@@ -111,9 +107,6 @@ const MainSection = () => {
                       <td>
                         {new Intl.NumberFormat("en-US").format(e.quoteVolume)}
                       </td>
-                      <td>MA(5)</td>
-                      <td>MA(30)</td>
-                      <td>Analyzing</td>
                     </tr>
                   );
                 })}

@@ -26,8 +26,9 @@ router.get("/callaccountbalance", (req, res, next) => {
 });
 router.post("/callpurchaseprice", (req, res, next) => {
   const accountHolding = [...req.body];
-  const callTestOrder = async () => {
+  const callPurchasePrice = async () => {
     let resArray = [];
+    let countArray = 0;
     // binance.allOrders("ETHBTC", (error, orders, symbol) => {
     //   if (error) return console.error(error);
     //   res.json(balances);
@@ -35,13 +36,15 @@ router.post("/callpurchaseprice", (req, res, next) => {
     console.log(accountHolding);
     accountHolding.forEach((e, i) => {
       if (e.symbol.toUpperCase() === "USDT") {
+        countArray += 1;
         resArray.push({ symbol: e.symbol, allTrade: [{ price: e.available }] });
       } else {
         binance.trades(`${e.symbol}USDT`, (error, trades, symbol) => {
-          // console.info(symbol + " trade history", trades);
+          // console.log(symbol + " trade history", trades);
           if (trades) {
+            countArray += 1;
             resArray.push({ symbol: symbol, allTrade: [...trades] });
-            if (i === accountHolding.length - 1) {
+            if (countArray === accountHolding.length) {
               res.json(resArray);
             }
           }
@@ -49,7 +52,7 @@ router.post("/callpurchaseprice", (req, res, next) => {
       }
     });
   };
-  callTestOrder();
+  callPurchasePrice();
 });
 router.get("/callwatchlist", (req, res, next) => {
   console.log("here is the watchlist call");

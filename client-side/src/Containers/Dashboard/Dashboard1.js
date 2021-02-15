@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useCallback } from "react";
 // import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
 // import Dashboard1Data from "./Data/Dashboard1Data";
-import ConnectPanel from "../../Conponents/ConnectBinance/ConnectPanel";
+import AccountSummary from "../../Conponents/ConnectBinance/AccountSummary";
 import MainControl from "../../Conponents/ConnectBinance/MainControl";
 import MainSection from "../../Conponents/ConnectBinance/MainSection";
 import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
@@ -411,7 +411,7 @@ const Dashboard1 = () => {
             <MainSection></MainSection>
             {/* /.Left col */}
             {/* right col (We are only adding the ID to make the widgets sortable)*/}
-            <ConnectPanel></ConnectPanel>
+            <AccountSummary></AccountSummary>
             {/* right col */}
           </div>
           {/* /.row (main row) */}

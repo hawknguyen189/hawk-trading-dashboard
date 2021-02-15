@@ -4,7 +4,7 @@ import { CoinContext } from "../../Containers/Context/CoinContext";
 import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
-const ConnectPanel = () => {
+const AccountSummary = () => {
   const { balance, setBalance, purchasePrice, setPurchasePrice } = useContext(
     UserAccount
   );
@@ -17,8 +17,8 @@ const ConnectPanel = () => {
   useEffect(() => {
     if (isMountedRef.current) {
       // return () => {
-      callAccountBalance();
       callCheckPrice();
+      callAccountBalance();
       let interval;
       if (runInterval) {
         interval = setInterval(() => {
@@ -51,7 +51,7 @@ const ConnectPanel = () => {
           } else {
             const jsonResponse = await response.json();
             // const resultParse = JSON.parse(jsonResponse);
-            console.log("holding trade ", jsonResponse);
+            console.log("callpurchaseprice holding trade ", jsonResponse);
             let tempArray = [];
             jsonResponse.forEach((e, i) => {
               if (e.symbol.toUpperCase() === "USDT") {
@@ -66,6 +66,7 @@ const ConnectPanel = () => {
                 });
               }
             });
+            console.log(tempArray);
             setPurchasePrice(tempArray);
           }
         } catch (e) {
@@ -76,7 +77,7 @@ const ConnectPanel = () => {
     callPurchasePrice();
   }, [isMountedRef, balance]);
   return (
-    <section className="col-lg-4 connectedSortable">
+    <section className="col-lg connectedSortable">
       {/* Map card */}
       <div className="card ">
         <div className="card-header border-0">
@@ -115,7 +116,9 @@ const ConnectPanel = () => {
                 <th scope="col">Available</th>
                 <th scope="col">On-Order</th>
                 <th scope="col">USD Equivalent</th>
-                <th scope="col">Purchase Price</th>
+                <th scope="col">Purchased Price</th>
+                <th scope="col">Profit & Loss</th>
+                <th scope="col">Trailing Stop</th>
               </tr>
             </thead>
             <tbody>
@@ -127,11 +130,6 @@ const ConnectPanel = () => {
                       return element.symbol === e.symbol;
                     });
                     console.log("index is ", findIndex);
-                    console.log("price is ", purchasePrice[findIndex]["price"]);
-                    // if (findIndex) {
-                    //   tempBalance[index]["purchasPrice"] =
-                    //     holdingTrade[findIndex].allTrade;
-                    // }
                   }
                   return (
                     <tr key={index}>
@@ -143,6 +141,7 @@ const ConnectPanel = () => {
                         {new Intl.NumberFormat("en-US").format(e.onOrder)}
                       </td>
                       <td>
+                        {/* usd equivalent */}
                         {e.symbol.toUpperCase() === "USDT"
                           ? new Intl.NumberFormat("en-US", {
                               style: "currency",
@@ -157,6 +156,7 @@ const ConnectPanel = () => {
                             )}
                       </td>
                       <td>
+                        {/* purchase price */}
                         {purchasePrice.length &&
                           new Intl.NumberFormat(
                             "en-US",
@@ -169,6 +169,48 @@ const ConnectPanel = () => {
                               currency: "USD",
                             }
                           ).format(purchasePrice[findIndex]["price"])}
+                      </td>
+                      <td>
+                        {/* profit & loss */}
+                        {purchasePrice.length && (
+                          <span
+                            className={
+                              (coin[`${e.symbol}USDT`] -
+                                purchasePrice[findIndex]["price"]) /
+                                coin[`${e.symbol}USDT`] >
+                              0
+                                ? "bullish"
+                                : "bearish"
+                            }
+                          >
+                            {new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            }).format(
+                              (coin[`${e.symbol}USDT`] -
+                                purchasePrice[findIndex]["price"]) *
+                                (parseInt(e.available) + parseInt(e.onOrder))
+                            )}{" "}
+                            (
+                            {new Intl.NumberFormat("en-US", {
+                              style: "percent",
+                            }).format(
+                              (coin[`${e.symbol}USDT`] -
+                                purchasePrice[findIndex]["price"]) /
+                                coin[`${e.symbol}USDT`]
+                            )}
+                            )
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <div className="row">
+                          <div className="col-sm mx-auto">
+                            <button className="btn btn-success">Run</button>
+                            <button className="btn btn-danger">Stop</button>
+                          </div>
+                          <div className="col-sm">Trailing Stop Price</div>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -355,4 +397,4 @@ const ConnectPanel = () => {
   );
 };
 
-export default ConnectPanel;
+export default AccountSummary;

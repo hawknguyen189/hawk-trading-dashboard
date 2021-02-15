@@ -86,10 +86,10 @@ const MainControl = () => {
   };
   const controlUpdate = (e) => {
     e.preventDefault();
-    callKlineData();
-    callWatchlist();
-    callAccountBalance();
     callCheckPrice();
+    callAccountBalance();
+    callWatchlist();
+    callKlineData();
     setUpdate(new Date().toLocaleString("en-US", { timeZone: "EST" }));
   };
   return (
