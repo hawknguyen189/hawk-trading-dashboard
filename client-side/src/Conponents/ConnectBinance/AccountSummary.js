@@ -54,15 +54,64 @@ const AccountSummary = () => {
             console.log("callpurchaseprice holding trade ", jsonResponse);
             let tempArray = [];
             jsonResponse.forEach((e, i) => {
+              const purchasedSymbol = e.symbol.substring(
+                0,
+                e.symbol.length - 4
+              );
               if (e.symbol.toUpperCase() === "USDT") {
                 tempArray.push({
                   symbol: e.symbol,
                   price: parseFloat(e.allTrade[e.allTrade.length - 1].price),
                 });
               } else {
+                // find average purchase price buy comparing holding amount
+                // then averaging up all separating orders
+                let avgPurchasePrice = 0;
+                let totalQty = 0;
+                let totalPaid = 0;
+                let totalSold = 0;
+                // find balance index to get total holding in accnount
+                const balanceIndex = balance.findIndex((element) => {
+                  return element.symbol === purchasedSymbol;
+                });
+                console.log("balance index", balanceIndex);
+                for (let index = e.allTrade.length - 1; index >= 0; index--) {
+                  // only count buy order by filtering out commission asset
+                  if (e.allTrade[index].commissionAsset === purchasedSymbol) {
+                    if (totalSold >= 0) {
+                      totalSold = totalSold - parseFloat(e.allTrade[index].qty);
+                    } else {
+                      totalQty = parseFloat(e.allTrade[index].qty) + totalQty;
+                      totalPaid =
+                        parseFloat(e.allTrade[index].quoteQty) + totalPaid;
+                    }
+                  } else {
+                    totalSold = parseFloat(e.allTrade[index].qty) + totalSold;
+                  }
+                  // if total quantity higher or equal to total holding,
+                  // stop and calculate avg price
+                  console.log(
+                    "total qty is",
+                    totalQty,
+                    "total paid",
+                    totalPaid,
+                    "qty",
+                    parseFloat(e.allTrade[index].qty)
+                  );
+                  if (
+                    totalQty >=
+                      parseFloat(balance[balanceIndex].available) +
+                        parseFloat(balance[balanceIndex].onOrder) ||
+                    index === 0
+                  ) {
+                    avgPurchasePrice = totalPaid / totalQty;
+                    console.log("avg price is", avgPurchasePrice);
+                    break;
+                  }
+                }
                 tempArray.push({
-                  symbol: e.symbol.substring(0, e.symbol.length - 4),
-                  price: parseFloat(e.allTrade[e.allTrade.length - 1].price),
+                  symbol: purchasedSymbol,
+                  price: parseFloat(avgPurchasePrice),
                 });
               }
             });
@@ -129,17 +178,10 @@ const AccountSummary = () => {
                   if (purchasePrice.length === balance.length) {
                     syncPurchasePrice = true;
                   }
-                  console.log(
-                    "purchase length is ",
-                    purchasePrice.length,
-                    "balance len",
-                    balance.length
-                  );
                   if (purchasePrice.length & syncPurchasePrice) {
                     findIndex = purchasePrice.findIndex((element) => {
                       return element.symbol === e.symbol;
                     });
-                    console.log("index is ", findIndex);
                   }
                   return (
                     <tr key={index}>
