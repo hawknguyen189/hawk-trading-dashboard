@@ -125,7 +125,17 @@ const AccountSummary = () => {
               {balance &&
                 balance.map((e, index) => {
                   let findIndex;
-                  if (purchasePrice.length) {
+                  let syncPurchasePrice = false;
+                  if (purchasePrice.length === balance.length) {
+                    syncPurchasePrice = true;
+                  }
+                  console.log(
+                    "purchase length is ",
+                    purchasePrice.length,
+                    "balance len",
+                    balance.length
+                  );
+                  if (purchasePrice.length & syncPurchasePrice) {
                     findIndex = purchasePrice.findIndex((element) => {
                       return element.symbol === e.symbol;
                     });
@@ -157,7 +167,7 @@ const AccountSummary = () => {
                       </td>
                       <td>
                         {/* purchase price */}
-                        {purchasePrice.length &&
+                        {purchasePrice.length & syncPurchasePrice &&
                           new Intl.NumberFormat(
                             "en-US",
                             {
@@ -172,7 +182,7 @@ const AccountSummary = () => {
                       </td>
                       <td>
                         {/* profit & loss */}
-                        {purchasePrice.length && (
+                        {purchasePrice.length & syncPurchasePrice && (
                           <span
                             className={
                               (coin[`${e.symbol}USDT`] -
