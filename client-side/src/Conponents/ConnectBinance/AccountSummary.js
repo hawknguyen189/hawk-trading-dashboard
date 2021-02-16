@@ -5,13 +5,16 @@ import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const AccountSummary = () => {
-  const { balance, setBalance, purchasePrice, setPurchasePrice } = useContext(
+  const { balance, openOrders, purchasePrice, setPurchasePrice } = useContext(
     UserAccount
   );
   const { coin } = useContext(CoinContext);
-  const { runInterval, callAccountBalance, callCheckPrice } = useContext(
-    BinanceContext
-  );
+  const {
+    runInterval,
+    callAccountBalance,
+    callCheckPrice,
+    callOpenOrders,
+  } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
@@ -19,6 +22,7 @@ const AccountSummary = () => {
       // return () => {
       callCheckPrice();
       callAccountBalance();
+      callOpenOrders();
       let interval;
       if (runInterval) {
         interval = setInterval(() => {
@@ -61,7 +65,7 @@ const AccountSummary = () => {
               if (e.symbol.toUpperCase() === "USDT") {
                 tempArray.push({
                   symbol: e.symbol,
-                  price: parseFloat(e.allTrade[e.allTrade.length - 1].price),
+                  price: parseFloat(1),
                 });
               } else {
                 // find average purchase price buy comparing holding amount
@@ -74,11 +78,10 @@ const AccountSummary = () => {
                 const balanceIndex = balance.findIndex((element) => {
                   return element.symbol === purchasedSymbol;
                 });
-                console.log("balance index", balanceIndex);
                 for (let index = e.allTrade.length - 1; index >= 0; index--) {
                   // only count buy order by filtering out commission asset
                   if (e.allTrade[index].commissionAsset === purchasedSymbol) {
-                    if (totalSold >= 0) {
+                    if (totalSold > 0) {
                       totalSold = totalSold - parseFloat(e.allTrade[index].qty);
                     } else {
                       totalQty = parseFloat(e.allTrade[index].qty) + totalQty;
@@ -88,16 +91,18 @@ const AccountSummary = () => {
                   } else {
                     totalSold = parseFloat(e.allTrade[index].qty) + totalSold;
                   }
+                  // console.log(
+                  //   "total qty",
+                  //   totalQty,
+                  //   "total paid",
+                  //   totalPaid,
+                  //   "total sold",
+                  //   totalSold,
+                  //   "purchase sym",
+                  //   purchasedSymbol
+                  // );
                   // if total quantity higher or equal to total holding,
                   // stop and calculate avg price
-                  console.log(
-                    "total qty is",
-                    totalQty,
-                    "total paid",
-                    totalPaid,
-                    "qty",
-                    parseFloat(e.allTrade[index].qty)
-                  );
                   if (
                     totalQty >=
                       parseFloat(balance[balanceIndex].available) +
@@ -105,7 +110,6 @@ const AccountSummary = () => {
                     index === 0
                   ) {
                     avgPurchasePrice = totalPaid / totalQty;
-                    console.log("avg price is", avgPurchasePrice);
                     break;
                   }
                 }
@@ -115,7 +119,6 @@ const AccountSummary = () => {
                 });
               }
             });
-            console.log(tempArray);
             setPurchasePrice(tempArray);
           }
         } catch (e) {
@@ -157,7 +160,7 @@ const AccountSummary = () => {
           {/* /.card-tools */}
         </div>
         <div className="card-body">
-          <h6>Account Balance: </h6>
+          <h4>Account Balance: </h4>
           <table className="table">
             <thead>
               <tr>
@@ -178,7 +181,7 @@ const AccountSummary = () => {
                   if (purchasePrice.length === balance.length) {
                     syncPurchasePrice = true;
                   }
-                  if (purchasePrice.length & syncPurchasePrice) {
+                  if (purchasePrice.length && syncPurchasePrice) {
                     findIndex = purchasePrice.findIndex((element) => {
                       return element.symbol === e.symbol;
                     });
@@ -209,11 +212,12 @@ const AccountSummary = () => {
                       </td>
                       <td>
                         {/* purchase price */}
-                        {purchasePrice.length & syncPurchasePrice &&
+                        {findIndex !== -1 &&
+                          syncPurchasePrice &&
                           new Intl.NumberFormat(
                             "en-US",
                             {
-                              maximumFractionDigits: 5,
+                              maximumFractionDigits: 6,
                               minimumFractionDigits: 2,
                             },
                             {
@@ -224,7 +228,7 @@ const AccountSummary = () => {
                       </td>
                       <td>
                         {/* profit & loss */}
-                        {purchasePrice.length & syncPurchasePrice && (
+                        {findIndex !== -1 && syncPurchasePrice && (
                           <span
                             className={
                               (coin[`${e.symbol}USDT`] -
@@ -235,14 +239,20 @@ const AccountSummary = () => {
                                 : "bearish"
                             }
                           >
-                            {new Intl.NumberFormat("en-US", {
-                              style: "currency",
-                              currency: "USD",
-                            }).format(
-                              (coin[`${e.symbol}USDT`] -
-                                purchasePrice[findIndex]["price"]) *
-                                (parseInt(e.available) + parseInt(e.onOrder))
-                            )}{" "}
+                            {e.symbol.toUpperCase() === "USDT"
+                              ? new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                }).format(0)
+                              : new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                }).format(
+                                  (coin[`${e.symbol}USDT`] -
+                                    purchasePrice[findIndex]["price"]) *
+                                    (parseFloat(e.available) +
+                                      parseFloat(e.onOrder))
+                                )}{" "}
                             (
                             {new Intl.NumberFormat("en-US", {
                               style: "percent",
@@ -270,38 +280,61 @@ const AccountSummary = () => {
             </tbody>
           </table>
         </div>
-        {/* /.card-body*/}
+        {/* /.open orders table*/}
         <div className="card-footer bg-transparent">
-          <h6>Favorite Coins</h6>
-          <div className="row">
-            <div className="col-4 text-center">
-              <div className="">
-                IOTA{" "}
-                {new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                }).format(coin[`IOTAUSDT`])}
-              </div>
-            </div>
-            {/* ./col */}
-            <div className="col-4 text-center">
-              SRM{" "}
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(coin[`SRMUSDT`])}
-            </div>
-            {/* ./col */}
-            <div className="col-4 text-center">
-              BAT{" "}
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(coin[`BATUSDT`])}
-            </div>
-            {/* ./col */}
-          </div>
-          {/* /.row */}
+          <h4>Manage Orders</h4>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Coin</th>
+                <th scope="col">Side</th>
+                <th scope="col">Price</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Filled</th>
+                <th scope="col">Total USD</th>
+              </tr>
+            </thead>
+            <tbody>
+              {openOrders &&
+                openOrders.map((e, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>
+                        {new Date(e.time).toLocaleString("en-US", {
+                          timeZone: "EST",
+                        })}
+                      </td>
+                      <td>{e.symbol}</td>
+                      <td>{e.side}</td>
+                      <td>
+                        {new Intl.NumberFormat(
+                          "en-US",
+                          {
+                            maximumFractionDigits: 6,
+                            minimumFractionDigits: 2,
+                          },
+                          {
+                            style: "currency",
+                            currency: "USD",
+                          }
+                        ).format(e.price)}
+                      </td>
+                      <td>{parseFloat(e.origQty)}</td>
+                      {/* calculate filled amount  */}
+                      <td>{e.origQuoteOrderQty / e.origQty}%</td>
+                      <td>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(e.origQty * e.price)}
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+          {/* /.open orders table */}
         </div>
       </div>
       {/* /.card */}

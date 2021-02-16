@@ -21,7 +21,7 @@ const BinanceContextProvider = ({ children }) => {
     setCoin,
   } = useContext(CoinContext);
   const { bot } = useContext(BotContext);
-  const { balance, setBalance } = useContext(UserAccount);
+  const { setBalance, setOpenOrders } = useContext(UserAccount);
 
   // use useMemo to memoise the value and refresh only when one of these values change.
   const callKlineData = useCallback(async () => {
@@ -50,7 +50,7 @@ const BinanceContextProvider = ({ children }) => {
       }
     }
   }, [watchlist]);
-
+  // watchlist func call
   const callWatchlist = useCallback(async () => {
     console.log("inside watchlist call");
     const endpoint = "callwatchlist";
@@ -92,6 +92,7 @@ const BinanceContextProvider = ({ children }) => {
       console.log("calling binnance error ", e);
     }
   }, []);
+  // call account summary func
   const callAccountBalance = useCallback(async () => {
     console.log("call account balance ");
     const endpoint = "callaccountbalance";
@@ -117,6 +118,26 @@ const BinanceContextProvider = ({ children }) => {
           }
         }
         setBalance(mainBalance);
+      }
+    } catch (e) {
+      console.log("calling account balance error ", e);
+    }
+  }, []);
+  // retrieve all open orders
+  const callOpenOrders = useCallback(async () => {
+    console.log("call open orders ");
+    const endpoint = "callopenorders";
+    try {
+      let response = await fetch(`/binance/${endpoint}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const jsonResponse = await response.json();
+        // const resultParse = JSON.parse(jsonResponse);
+        console.log("open orders", jsonResponse);
+        setOpenOrders(jsonResponse);
+        // setBalance(mainBalance);
       }
     } catch (e) {
       console.log("calling account balance error ", e);
@@ -153,6 +174,7 @@ const BinanceContextProvider = ({ children }) => {
       callWatchlist,
       callAccountBalance,
       callCheckPrice,
+      callOpenOrders,
     }),
     [runInterval, callKlineData]
   );

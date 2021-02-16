@@ -14,15 +14,20 @@ const binance = new Binance().options({
 router.get("/callaccountbalance", (req, res, next) => {
   const checkAccountBalance = async () => {
     await binance.useServerTime();
-    await binance.exchangeInfo(function (lim) {
-      console.log("here is your API limit inside account balance ", lim);
-    });
     binance.balance((error, balances) => {
       if (error) return console.error(error);
       res.json(balances);
     });
   };
   checkAccountBalance();
+});
+router.get("/callopenorders", (req, res, next) => {
+  const callOpenOrders = async () => {
+    binance.openOrders(false, (error, openOrders) => {
+      res.json(openOrders);
+    });
+  };
+  callOpenOrders();
 });
 router.post("/callpurchaseprice", (req, res, next) => {
   const accountHolding = [...req.body];
