@@ -11,11 +11,41 @@ const AccountSummary = () => {
   const { coin } = useContext(CoinContext);
   const {
     runInterval,
+    setRunInterval,
+    callKlineData,
+    callWatchlist,
     callAccountBalance,
     callCheckPrice,
     callOpenOrders,
+    trailingDown,
+    trailingUp,
   } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
+  const [update, setUpdate] = useState(
+    new Date().toLocaleString("en-US", { timeZone: "EST" })
+  );
+  const [runTrailing, setRunTrailing] = useState(false);
+  const [trailingStop, setTrailingStop] = useState(0);
+
+  let totalBalance = 0;
+  //trailing stop function will first enter down & up rate that was pre-determined as 10 & 5
+  //at 1st, it will set stop price as -10% of purchase price
+  //if the market price go higher than 5%  it will re-adjust new stop price as -10% market price
+  //the stop loss will go up with the market price. BEST THING FOR THE BULL MARKET - Hawk
+  const handleTrailing = (symbol, findIndex) => {
+    const marketPrice = parseFloat(coin[`${symbol}USDT`]);
+    const boughtPrice = parseFloat(purchasePrice[findIndex]["price"]);
+    if (runTrailing) {
+      setRunTrailing(false);
+    } else {
+      setRunTrailing(true);
+      if (marketPrice >= boughtPrice * (1 + trailingUp / 100)) {
+        setTrailingStop(marketPrice * (1 - trailingDown / 100));
+      } else {
+        setTrailingStop(boughtPrice * (1 - trailingDown / 100));
+      }
+    }
+  };
 
   useEffect(() => {
     if (isMountedRef.current) {
@@ -128,6 +158,15 @@ const AccountSummary = () => {
     };
     callPurchasePrice();
   }, [isMountedRef, balance]);
+  const controlUpdate = (e) => {
+    e.preventDefault();
+    callCheckPrice();
+    callAccountBalance();
+    callOpenOrders();
+    callWatchlist();
+    callKlineData();
+    setUpdate(new Date().toLocaleString("en-US", { timeZone: "EST" }));
+  };
   return (
     <section className="col-lg connectedSortable">
       {/* Map card */}
@@ -160,7 +199,20 @@ const AccountSummary = () => {
           {/* /.card-tools */}
         </div>
         <div className="card-body">
-          <h4>Account Balance: </h4>
+          <div className="row">
+            <h4 className="col-sm-4">Account Balance: </h4>
+            {/* Update all data  */}
+            <div className="row col-sm">
+              <div className="col-sm-4">
+                <button className="btn btn-primary" onClick={controlUpdate}>
+                  Update
+                </button>
+              </div>
+              <div className="col-sm">
+                <em>Lastest Update is: {update}</em>
+              </div>
+            </div>
+          </div>
           <table className="table">
             <thead>
               <tr>
@@ -186,6 +238,17 @@ const AccountSummary = () => {
                       return element.symbol === e.symbol;
                     });
                   }
+                  if (e.symbol.toUpperCase() === "USDT") {
+                    totalBalance =
+                      totalBalance +
+                      (parseInt(e.available) + parseInt(e.onOrder));
+                  } else {
+                    totalBalance =
+                      totalBalance +
+                      coin[`${e.symbol}USDT`] *
+                        (parseInt(e.available) + parseInt(e.onOrder));
+                  }
+
                   return (
                     <tr key={index}>
                       <td>{e.symbol}</td>
@@ -201,7 +264,9 @@ const AccountSummary = () => {
                           ? new Intl.NumberFormat("en-US", {
                               style: "currency",
                               currency: "USD",
-                            }).format(e.available)
+                            }).format(
+                              parseInt(e.available) + parseInt(e.onOrder)
+                            )
                           : new Intl.NumberFormat("en-US", {
                               style: "currency",
                               currency: "USD",
@@ -266,17 +331,41 @@ const AccountSummary = () => {
                         )}
                       </td>
                       <td>
-                        <div className="row">
-                          <div className="col-sm mx-auto">
-                            <button className="btn btn-success">Run</button>
-                            <button className="btn btn-danger">Stop</button>
+                        {/* run trailing stop function */}
+                        {findIndex !== -1 && syncPurchasePrice && (
+                          <div className="row">
+                            <div className="col-sm mx-auto">
+                              <button
+                                id="trailingButton"
+                                className={
+                                  runTrailing
+                                    ? "btn btn-danger"
+                                    : "btn btn-success"
+                                }
+                                onClick={(element) => {
+                                  element.preventDefault();
+                                  handleTrailing(e.symbol, findIndex);
+                                }}
+                              >
+                                {runTrailing ? "Stop" : "Run"}
+                              </button>
+                            </div>
+                            <div className="col-sm">Trailing Stop Price</div>
                           </div>
-                          <div className="col-sm">Trailing Stop Price</div>
-                        </div>
-                      </td>
+                        )}
+                       </td>
                     </tr>
                   );
                 })}
+              <tr>
+                <th>Total USD Uquivalent</th>
+                <th>
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(totalBalance)}
+                </th>
+              </tr>
             </tbody>
           </table>
         </div>
