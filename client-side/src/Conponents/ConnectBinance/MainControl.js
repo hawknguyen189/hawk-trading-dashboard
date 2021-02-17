@@ -8,19 +8,13 @@ const MainControl = () => {
   const {
     runInterval,
     setRunInterval,
-    callKlineData,
-    callWatchlist,
-    callAccountBalance,
-    callCheckPrice,
+    trailingDown,
+    setTrailingDown,
+    trailingUp,
+    setTrailingUp,
   } = useContext(BinanceContext);
-  const isMountedRef = useIsMountedRef();
   const { bot, setBot } = useContext(BotContext);
-  const { balance } = useContext(UserAccount);
-  const [runTrailing, setRunTrailing] = useState(false);
   const [runBot, setRunBot] = useState(false);
-  const [update, setUpdate] = useState(
-    new Date().toLocaleString("en-US", { timeZone: "EST" })
-  );
 
   const controlInterval = (e) => {
     e.preventDefault();
@@ -30,17 +24,13 @@ const MainControl = () => {
       setRunInterval(false);
     }
   };
-  const controlTraling = (e) => {
-    e.preventDefault();
-    if (e.target.innerHTML.toUpperCase() === "ON") {
-      // get down & up price & convert to number
-      const downValue = parseFloat(document.getElementById("downValue").value);
-      const upValue = parseFloat(document.getElementById("upValue").value);
-      console.log(downValue, upValue);
-      setRunTrailing(true);
-    } else {
-      setRunTrailing(false);
-    }
+  const handleDown = (e) => {
+    const downValue = parseFloat(document.getElementById("downValue").value);
+    setTrailingDown(downValue);
+  };
+  const handleUp = (e) => {
+    const upValue = parseFloat(document.getElementById("upValue").value);
+    setTrailingUp(upValue);
   };
   const controlBots = (e) => {
     e.preventDefault();
@@ -80,18 +70,7 @@ const MainControl = () => {
       }
     }
   };
-  const testPlaceOrder = (e) => {
-    e.preventDefault();
-    console.log("calling test order");
-  };
-  const controlUpdate = (e) => {
-    e.preventDefault();
-    callCheckPrice();
-    callAccountBalance();
-    callWatchlist();
-    callKlineData();
-    setUpdate(new Date().toLocaleString("en-US", { timeZone: "EST" }));
-  };
+
   return (
     <section className="main-control col-sm container">
       {/* turn on interval  */}
@@ -128,41 +107,11 @@ const MainControl = () => {
           <p>{runBot ? "BOTs On" : "BOTs Off"} </p>
         </div>
       </div>
-      {/* Update all data  */}
-      <div className="row border border-info rounded">
-        <div className="col-sm">
-          <p>Update All Data</p>
-        </div>
-        <div className="col-sm">
-          <button className="btn btn-primary" onClick={controlUpdate}>
-            Update
-          </button>
-        </div>
-        <div className="col-sm">
-          <p>Lastest Update is: {update}</p>
-        </div>
-      </div>
       {/* traling stop */}
       <div className="row border border-info rounded">
         <div className="container">
           <div className="text-center">
             <h4>Run Trailing Stop</h4>
-          </div>
-        </div>
-        <div className="container row">
-          <div className="col-sm d-flex justify-content-around ">
-            <button className="btn btn-success" onClick={controlTraling}>
-              On
-            </button>
-            <button className="btn btn-danger" onClick={controlTraling}>
-              Off
-            </button>
-            <button className="btn btn-info" onClick={testPlaceOrder}>
-              Place Order
-            </button>
-          </div>
-          <div className="col-sm  d-flex justify-content-center">
-            <p>{runTrailing ? "Trailing Stop On" : "Trailing Stop Off"} </p>
           </div>
         </div>
         {/* input up and down price for the trailing stop  */}
@@ -176,7 +125,8 @@ const MainControl = () => {
               id="downValue"
               className="form-control"
               aria-label="Amount (to the nearest dollar)"
-              defaultValue="10"
+              defaultValue={trailingDown}
+              onChange={handleDown}
             />
             <div className="input-group-append">
               <span className="input-group-text">%</span>
@@ -191,7 +141,8 @@ const MainControl = () => {
               id="upValue"
               className="form-control"
               aria-label="Amount (to the nearest dollar)"
-              defaultValue="5"
+              defaultValue={trailingUp}
+              onChange={handleUp}
             />
             <div className="input-group-append">
               <span className="input-group-text">%</span>

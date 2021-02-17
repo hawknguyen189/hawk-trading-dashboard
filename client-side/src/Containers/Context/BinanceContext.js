@@ -13,6 +13,8 @@ export const BinanceContext = createContext();
 
 const BinanceContextProvider = ({ children }) => {
   const [runInterval, setRunInterval] = useState(false);
+  const [trailingDown, setTrailingDown] = useState(10);
+  const [trailingUp, setTrailingUp] = useState(5);
   const {
     watchlist,
     setWatchlist,
@@ -175,8 +177,12 @@ const BinanceContextProvider = ({ children }) => {
       callAccountBalance,
       callCheckPrice,
       callOpenOrders,
+      trailingDown,
+      setTrailingDown,
+      trailingUp,
+      setTrailingUp,
     }),
-    [runInterval, callKlineData]
+    [runInterval, callKlineData, trailingDown, trailingUp]
   );
   return (
     <BinanceContext.Provider value={contextValues}>
