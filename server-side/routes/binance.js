@@ -29,6 +29,16 @@ router.get("/callopenorders", (req, res, next) => {
   };
   callOpenOrders();
 });
+router.post("/callmarketsell", (req, res, next) => {
+  const symbol = `${req.body.symbol}USDT`;
+  const quantity = req.body.qty;
+  const callMarketSell = async () => {
+    await binance.marketSell(symbol, quantity, (error, response) => {
+      res.json(response);
+    });
+  };
+  callMarketSell();
+});
 router.post("/callpurchaseprice", (req, res, next) => {
   const accountHolding = [...req.body];
   const callPurchasePrice = async () => {
@@ -38,7 +48,6 @@ router.post("/callpurchaseprice", (req, res, next) => {
     //   if (error) return console.error(error);
     //   res.json(balances);
     // });
-    console.log(accountHolding);
     accountHolding.forEach((e, i) => {
       if (e.symbol.toUpperCase() === "USDT") {
         countArray += 1;

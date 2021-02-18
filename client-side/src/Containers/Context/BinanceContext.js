@@ -168,6 +168,28 @@ const BinanceContextProvider = ({ children }) => {
       console.log("calling check all price error ", e);
     }
   }, []);
+  const callMarketSell = useCallback(async (symbol) => {
+    const endpoint = "callmarketsell";
+    try {
+      let response = await fetch(`/binance/${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(symbol), // body data type must match "Content-Type" header
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const jsonResponse = await response.json();
+        console.log("market sell ", jsonResponse);
+      }
+    } catch (e) {
+      console.log("market sell order error ", e);
+    }
+  }, []);
+
   const contextValues = useMemo(
     () => ({
       runInterval,
@@ -181,6 +203,7 @@ const BinanceContextProvider = ({ children }) => {
       setTrailingDown,
       trailingUp,
       setTrailingUp,
+      callMarketSell,
     }),
     [runInterval, callKlineData, trailingDown, trailingUp]
   );

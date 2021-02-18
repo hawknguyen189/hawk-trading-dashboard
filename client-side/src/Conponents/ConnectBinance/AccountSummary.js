@@ -5,9 +5,13 @@ import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const AccountSummary = () => {
-  const { balance, openOrders, purchasePrice, setPurchasePrice } = useContext(
-    UserAccount
-  );
+  const {
+    balance,
+    setBlance,
+    openOrders,
+    purchasePrice,
+    setPurchasePrice,
+  } = useContext(UserAccount);
   const { coin } = useContext(CoinContext);
   const {
     runInterval,
@@ -19,34 +23,55 @@ const AccountSummary = () => {
     callOpenOrders,
     trailingDown,
     trailingUp,
+    callMarketSell,
   } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
   const [update, setUpdate] = useState(
     new Date().toLocaleString("en-US", { timeZone: "EST" })
   );
-  const [runTrailing, setRunTrailing] = useState(false);
-  const [trailingStop, setTrailingStop] = useState(0);
+  const [trailingStop, setTrailingStop] = useState([]);
 
   let totalBalance = 0;
   //trailing stop function will first enter down & up rate that was pre-determined as 10 & 5
   //at 1st, it will set stop price as -10% of purchase price
   //if the market price go higher than 5%  it will re-adjust new stop price as -10% market price
   //the stop loss will go up with the market price. BEST THING FOR THE BULL MARKET - Hawk
-  const handleTrailing = (symbol, findIndex) => {
+  const handleTrailing = (symbol, findIndex, balanceIndex) => {
     const marketPrice = parseFloat(coin[`${symbol}USDT`]);
     const boughtPrice = parseFloat(purchasePrice[findIndex]["price"]);
-    if (runTrailing) {
-      setRunTrailing(false);
+    const tempArr = [...purchasePrice];
+    // update trailing stop data
+    if (tempArr[findIndex]["runTrailing"]) {
+      // trailing stop is running
+      tempArr[findIndex]["runTrailing"] = false;
+      tempArr[findIndex]["trailingPrice"] = 0;
     } else {
-      setRunTrailing(true);
+      // trailing stop is not wokring
       if (marketPrice >= boughtPrice * (1 + trailingUp / 100)) {
-        setTrailingStop(marketPrice * (1 - trailingDown / 100));
+        if (
+          tempArr[findIndex]["trailingPrice"] <
+          marketPrice * (1 - trailingDown / 100)
+        ) {
+          // only update new trailing price if the new one higher than prev one
+          tempArr[findIndex]["trailingPrice"] =
+            marketPrice * (1 - trailingDown / 100);
+        }
       } else {
-        setTrailingStop(boughtPrice * (1 - trailingDown / 100));
+        tempArr[findIndex]["trailingPrice"] =
+          boughtPrice * (1 - trailingDown / 100);
       }
+      tempArr[findIndex]["runTrailing"] = true;
     }
+    // decide to sell at trailing stop price ?
+    if (tempArr[findIndex]["trailingPrice"] >= marketPrice) {
+      callMarketSell({
+        symbol: symbol,
+        qty: parseFloat(balance[balanceIndex]["available"]),
+      });
+    }
+    // update purchasePrice context
+    setPurchasePrice(tempArr);
   };
-
   useEffect(() => {
     if (isMountedRef.current) {
       // return () => {
@@ -96,6 +121,8 @@ const AccountSummary = () => {
                 tempArray.push({
                   symbol: e.symbol,
                   price: parseFloat(1),
+                  runTrailing: false,
+                  trailingPrice: 0,
                 });
               } else {
                 // find average purchase price buy comparing holding amount
@@ -146,6 +173,8 @@ const AccountSummary = () => {
                 tempArray.push({
                   symbol: purchasedSymbol,
                   price: parseFloat(avgPurchasePrice),
+                  runTrailing: false,
+                  trailingPrice: 0,
                 });
               }
             });
@@ -336,24 +365,29 @@ const AccountSummary = () => {
                           <div className="row">
                             <div className="col-sm mx-auto">
                               <button
-                                id="trailingButton"
+                                id={`trailing${e.symbol}`}
                                 className={
-                                  runTrailing
+                                  purchasePrice[findIndex]["runTrailing"]
                                     ? "btn btn-danger"
                                     : "btn btn-success"
                                 }
                                 onClick={(element) => {
                                   element.preventDefault();
-                                  handleTrailing(e.symbol, findIndex);
+                                  handleTrailing(e.symbol, findIndex, index);
                                 }}
                               >
-                                {runTrailing ? "Stop" : "Run"}
+                                {purchasePrice[findIndex]["runTrailing"]
+                                  ? "Stop"
+                                  : "Run"}
                               </button>
                             </div>
-                            <div className="col-sm">Trailing Stop Price</div>
+                            <div className="col-sm">
+                              Trailing Stop Price:{" "}
+                              {purchasePrice[findIndex]["trailingPrice"]}
+                            </div>
                           </div>
                         )}
-                       </td>
+                      </td>
                     </tr>
                   );
                 })}
