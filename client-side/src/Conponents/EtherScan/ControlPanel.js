@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 
 const ControlPanel = ({ handleScan, whale, handleTransaction }) => {
-  const [copySuccess, setCopySuccess] = useState("");
+  // const [copySuccess, setCopySuccess] = useState("");
   //   const textAreaRef = useRef(null);
   //   const copyToClipboard = (e) => {
   //     e.preventDefault();

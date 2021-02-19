@@ -6,18 +6,12 @@ import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const AccountSummary = () => {
   // context vars
-  const {
-    balance,
-    setBlance,
-    openOrders,
-    purchasePrice,
-    setPurchasePrice,
-  } = useContext(UserAccount);
+  const { balance, openOrders, purchasePrice, setPurchasePrice } = useContext(
+    UserAccount
+  );
   const { coin } = useContext(CoinContext);
   const {
     runInterval,
-    setRunInterval,
-    callKlineData,
     callWatchlist,
     callAccountBalance,
     callCheckPrice,
@@ -31,6 +25,8 @@ const AccountSummary = () => {
   const [update, setUpdate] = useState(
     new Date().toLocaleString("en-US", { timeZone: "EST" })
   );
+  const [panicAsset, setPanicAsset] = useState("");
+  const [panicQty, setPanicQty] = useState(0);
   const [trailingStop, setTrailingStop] = useState({});
   const [trailingInterval, setTrailingInterval] = useState(); //need a state var to avoid getting reset every time we call func
   let totalBalance = 0;
@@ -287,6 +283,13 @@ const AccountSummary = () => {
     // callKlineData();
     setUpdate(new Date().toLocaleString("en-US", { timeZone: "EST" }));
   };
+  const controlPanicSell = (e) => {
+    e.preventDefault();
+    callMarketSell({
+      symbol: panicAsset,
+      qty: panicQty,
+    });
+  };
   return (
     <section className="col-lg connectedSortable">
       {/* Map card */}
@@ -323,10 +326,36 @@ const AccountSummary = () => {
             <h4 className="col-sm-4">Account Balance: </h4>
             {/* Update all data  */}
             <div className="row col-sm">
-              <div className="col-sm-4">
+              <div className="col-sm-2">
                 <button className="btn btn-primary" onClick={controlUpdate}>
                   Update
                 </button>
+              </div>
+              <div className="col-sm-6">
+                <div className="input-group mb-3">
+                  <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    id="button-addon1"
+                    onClick={controlPanicSell}
+                  >
+                    Panic Sell
+                  </button>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="ETHUP"
+                    aria-label="pair"
+                    onChange={(e) => setPanicAsset(e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="qty"
+                    aria-label="total quantity"
+                    onChange={(e) => setPanicQty(parseFloat(e.target.value))}
+                  />
+                </div>
               </div>
               <div className="col-sm">
                 <em>Lastest Update is: {update}</em>

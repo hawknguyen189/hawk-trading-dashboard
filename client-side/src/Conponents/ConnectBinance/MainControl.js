@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { BinanceContext } from "../../Containers/Context/BinanceContext";
-import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
+// import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 import { BotContext } from "../../Containers/Context/BotContext";
-import { UserAccount } from "../../Containers/Context/UserAccount";
+// import { UserAccount } from "../../Containers/Context/UserAccount";
 
 const MainControl = () => {
   const {

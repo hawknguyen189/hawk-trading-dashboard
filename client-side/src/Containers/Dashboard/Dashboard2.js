@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { WhaleContext } from "../Context/WhaleContext";
 import ControlPanel from "../../Conponents/EtherScan/ControlPanel";
 import TopBar from "../../Conponents/EtherScan/TopBar";
 
 const Dashboard2 = () => {
   const { whale, setWhale } = useContext(WhaleContext);
-  const { transaction, setTransaction } = useContext(WhaleContext);
+  // const { transaction, setTransaction } = useContext(WhaleContext);
   const checkBalance = async (event) => {
     event.preventDefault();
     console.log("foo");

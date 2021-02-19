@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import { BotContext } from "../../Containers/Context/BotContext";
+import React from "react";
+// import { BotContext } from "../../Containers/Context/BotContext";
 
 const BotController = ({ stylist }) => {
-  const { bot, setBot } = useContext(BotContext);
-  const [botInfo, setBotInfo] = useState("");
+  // const { bot, setBot } = useContext(BotContext);
+  // const [botInfo, setBotInfo] = useState("");
 
   return (
     <div className="col-lg-3 col-6">

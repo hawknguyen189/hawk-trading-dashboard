@@ -1,27 +1,27 @@
-import React, { useEffect, useContext, useCallback } from "react";
+import React, { useEffect, useContext } from "react";
 // import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
 // import Dashboard1Data from "./Data/Dashboard1Data";
 import AccountSummary from "../../Conponents/ConnectBinance/AccountSummary";
 import MainControl from "../../Conponents/ConnectBinance/MainControl";
 import MainSection from "../../Conponents/ConnectBinance/MainSection";
 import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
-import BotController from "../../Conponents/ConnectBinance/BotController";
+// import BotController from "../../Conponents/ConnectBinance/BotController";
 import { CoinContext } from "../Context/CoinContext";
-import { BinanceContext } from "../Context/BinanceContext";
+// import { BinanceContext } from "../Context/BinanceContext";
 import { BotContext } from "../Context/BotContext";
-import { useIsMountedRef } from "../Utils/CustomHook";
+// import { useIsMountedRef } from "../Utils/CustomHook";
 
 const Dashboard1 = () => {
-  const isMountedRef = useIsMountedRef(); // fix React state update on an unmounted component
+  // const isMountedRef = useIsMountedRef(); // fix React state update on an unmounted component
   //function set local storage
   const Storage = (order, botName) => {
     localStorage.setItem(botName, JSON.stringify({ [botName]: order }));
   };
 
-  const { runInterval, callKlineData } = useContext(BinanceContext);
-  const { watchlist } = useContext(CoinContext);
-  const { movingAverage, setMovingAverage } = useContext(CoinContext);
-  const { coin, setCoin } = useContext(CoinContext);
+  // const { runInterval, callKlineData } = useContext(BinanceContext);
+  // const { watchlist } = useContext(CoinContext);
+  const { movingAverage } = useContext(CoinContext);
+  const { coin } = useContext(CoinContext);
   const { bot, setBot, pause, setPause } = useContext(BotContext);
 
   // useEffect(() => {
