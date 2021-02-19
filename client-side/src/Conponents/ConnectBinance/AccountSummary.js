@@ -62,7 +62,7 @@ const AccountSummary = () => {
             ...prev,
             [symbol]: {
               symbol: symbol,
-              marketPrice: parseFloat(jsonResponse[`${symbol}USDT`]).toFixed(3),
+              marketPrice: parseFloat(jsonResponse[`${symbol}USDT`]).toFixed(5),
               boughtPrice: boughtPrice,
               purchasePriceIndex: findIndex,
               balanceIndex: balanceIndex,
@@ -119,13 +119,13 @@ const AccountSummary = () => {
         tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
           trailingStop[symbol].marketPrice *
           (1 - trailingDown / 100)
-        ).toFixed(3);
+        ).toFixed(5);
       }
     } else {
       tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
         trailingStop[symbol].boughtPrice *
         (1 - trailingDown / 100)
-      ).toFixed(3);
+      ).toFixed(5);
     }
 
     // decide to sell at trailing stop price ?
@@ -285,10 +285,20 @@ const AccountSummary = () => {
   };
   const controlPanicSell = (e) => {
     e.preventDefault();
-    callMarketSell({
-      symbol: panicAsset,
-      qty: panicQty,
-    });
+    if (panicAsset && panicQty) {
+      if (
+        window.confirm(
+          `Are you sure you want to market sell ${panicQty} ${panicAsset}?`
+        )
+      ) {
+        callMarketSell({
+          symbol: panicAsset,
+          qty: panicQty,
+        });
+      }
+    } else {
+      alert("Please input asset (ex: ETHUP or ETHDOWN) and total quantity");
+    }
   };
   return (
     <section className="col-lg connectedSortable">
@@ -353,8 +363,26 @@ const AccountSummary = () => {
                     className="form-control"
                     placeholder="qty"
                     aria-label="total quantity"
-                    onChange={(e) => setPanicQty(parseFloat(e.target.value))}
+                    onChange={(e) => setPanicQty(e.target.value)}
+                    value={panicQty}
                   />
+                  <a
+                    href="#"
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (panicAsset) {
+                        const found = balance.findIndex(
+                          (e) => e.symbol === panicAsset.toUpperCase()
+                        );
+                        setPanicQty(
+                          parseFloat(balance[found].available).toFixed(2)
+                        );
+                      }
+                    }}
+                  >
+                    Max?
+                  </a>
                 </div>
               </div>
               <div className="col-sm">
