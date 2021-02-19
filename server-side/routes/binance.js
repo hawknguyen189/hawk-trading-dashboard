@@ -34,6 +34,7 @@ router.post("/callmarketsell", (req, res, next) => {
   const quantity = req.body.qty;
   const callMarketSell = async () => {
     await binance.marketSell(symbol, quantity, (error, response) => {
+      console.log(response);
       res.json(response);
     });
   };
