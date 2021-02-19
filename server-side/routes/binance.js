@@ -96,6 +96,15 @@ router.get("/callcheckprice", (req, res, next) => {
   };
   checkPrice();
 });
+router.post("/callchecksingle", (req, res, next) => {
+  const symbol = req.body.symbol;
+  const checkSingle = async () => {
+    binance.prices(`${symbol}USDT`, (error, ticker) => {
+      res.json(ticker);
+    });
+  };
+  checkSingle();
+});
 
 router.post("/checkorder", (req, res, next) => {
   //check bid  & ask order
@@ -103,8 +112,13 @@ router.post("/checkorder", (req, res, next) => {
   binance.bookTickers(symbol, (error, ticker) => {
     res.json(ticker);
   });
-  // res.json(["Tony", "Lisa", "Michael", "Ginger", "Food"]);
-  // res.end("yes");
+});
+router.post("/cancelorder", (req, res, next) => {
+  //cancel order
+  const symbol = req.body.symbol;
+  binance.cancel("ETHBTC", orderid, (error, response, symbol) => {
+    res.json(response);
+  });
 });
 
 router.post("/callklinedata", (req, res, next) => {

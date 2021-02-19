@@ -205,7 +205,7 @@ const BinanceContextProvider = ({ children }) => {
       setTrailingUp,
       callMarketSell,
     }),
-    [runInterval, callKlineData, trailingDown, trailingUp]
+    [runInterval, trailingDown, trailingUp]
   );
   return (
     <BinanceContext.Provider value={contextValues}>

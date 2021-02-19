@@ -5,6 +5,7 @@ import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 
 const AccountSummary = () => {
+  // context vars
   const {
     balance,
     setBlance,
@@ -26,10 +27,12 @@ const AccountSummary = () => {
     callMarketSell,
   } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
+  // state vars
   const [update, setUpdate] = useState(
     new Date().toLocaleString("en-US", { timeZone: "EST" })
   );
-  const [trailingStop, setTrailingStop] = useState([]);
+  const [trailingStop, setTrailingStop] = useState({});
+  const [trailingInterval, setTrailingInterval] = useState(); //need a state var to avoid getting reset every time we call func
 
   let totalBalance = 0;
   //trailing stop function will first enter down & up rate that was pre-determined as 10 & 5
@@ -37,41 +40,117 @@ const AccountSummary = () => {
   //if the market price go higher than 5%  it will re-adjust new stop price as -10% market price
   //the stop loss will go up with the market price. BEST THING FOR THE BULL MARKET - Hawk
   const handleTrailing = (symbol, findIndex, balanceIndex) => {
-    const marketPrice = parseFloat(coin[`${symbol}USDT`]);
-    const boughtPrice = parseFloat(purchasePrice[findIndex]["price"]);
     const tempArr = [...purchasePrice];
+    const boughtPrice = parseFloat(purchasePrice[findIndex]["price"]).toFixed(
+      3
+    );
+    // check 1 single coin price
+    const callCheckSingle = async () => {
+      // console.log("call check price")
+      const endpoint = "callchecksingle";
+      try {
+        let response = await fetch(`/binance/${endpoint}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: JSON.stringify({ symbol: symbol }), // body data type must match "Content-Type" header
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          const jsonResponse = await response.json();
+          //updating this setTrailingStop will trigger below controlTrailing function
+          setTrailingStop((prev) => ({
+            ...prev,
+            [symbol]: {
+              symbol: symbol,
+              marketPrice: parseFloat(jsonResponse[`${symbol}USDT`]).toFixed(3),
+              boughtPrice: boughtPrice,
+              purchasePriceIndex: findIndex,
+              balanceIndex: balanceIndex,
+            },
+          }));
+        }
+      } catch (e) {
+        console.log("calling check single price error ", e);
+      }
+    };
     // update trailing stop data
     if (tempArr[findIndex]["runTrailing"]) {
-      // trailing stop is running
+      // trailing stop is running & btn clicked so we stop it
       tempArr[findIndex]["runTrailing"] = false;
       tempArr[findIndex]["trailingPrice"] = 0;
-    } else {
-      // trailing stop is not wokring
-      if (marketPrice >= boughtPrice * (1 + trailingUp / 100)) {
-        if (
-          tempArr[findIndex]["trailingPrice"] <
-          marketPrice * (1 - trailingDown / 100)
-        ) {
-          // only update new trailing price if the new one higher than prev one
-          tempArr[findIndex]["trailingPrice"] =
-            marketPrice * (1 - trailingDown / 100);
-        }
-      } else {
-        tempArr[findIndex]["trailingPrice"] =
-          boughtPrice * (1 - trailingDown / 100);
+      clearInterval(trailingInterval); //clear calling check price interval
+
+      if (trailingStop[symbol]) {
+        // delete asset from trailing stop list
+        const tempState = { ...trailingStop };
+        delete tempState[symbol];
+        setTrailingStop(tempState);
       }
+    } else {
+      // trailing stop is not wokring => run it now
+      setTrailingInterval(
+        setInterval(() => {
+          callCheckSingle(); //set timeInterval here to keep it running
+        }, 3500)
+      );
+
       tempArr[findIndex]["runTrailing"] = true;
     }
-    // decide to sell at trailing stop price ?
-    if (tempArr[findIndex]["trailingPrice"] >= marketPrice) {
-      callMarketSell({
-        symbol: symbol,
-        qty: parseFloat(balance[balanceIndex]["available"]),
-      });
-    }
-    // update purchasePrice context
+
     setPurchasePrice(tempArr);
   };
+  useEffect(() => {
+    //this useEffect is for running controlTrailing when update on trailingStop
+    const tempArr = [...purchasePrice];
+    const controlTrailing = (symbol) => {
+      if (
+        trailingStop[symbol].marketPrice >=
+        trailingStop[symbol].boughtPrice * (1 + trailingUp / 100)
+      ) {
+        if (
+          tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] <
+          trailingStop[symbol].marketPrice * (1 - trailingDown / 100)
+        ) {
+          // only update new trailing price if the new one higher than prev one
+          //aim to maximize profit on stop loss
+          tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] =
+            trailingStop[symbol].marketPrice * (1 - trailingDown / 100);
+        }
+      } else {
+        tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] =
+          trailingStop[symbol].boughtPrice * (1 - trailingDown / 100);
+      }
+
+      // decide to sell at trailing stop price ?
+      if (
+        tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] >=
+        trailingStop[symbol].marketPrice
+      ) {
+        callMarketSell({
+          symbol: symbol,
+          qty: parseFloat(
+            Math.floor(
+              balance[trailingStop[symbol].balanceIndex]["available"] * 100
+            ) / 100 //floor will round to the lowest integer
+          ),
+        });
+      }
+
+      // update purchasePrice context
+      setPurchasePrice(tempArr);
+    };
+    if (Object.keys(trailingStop).length && purchasePrice.length) {
+      //check if not empty
+      for (const property in trailingStop) {
+        controlTrailing(property);
+      }
+    }
+  }, [trailingStop]); //re-run when trailingStop state gets updated
+
   useEffect(() => {
     if (isMountedRef.current) {
       // return () => {
@@ -137,7 +216,10 @@ const AccountSummary = () => {
                 });
                 for (let index = e.allTrade.length - 1; index >= 0; index--) {
                   // only count buy order by filtering out commission asset
-                  if (e.allTrade[index].commissionAsset === purchasedSymbol) {
+                  if (
+                    e.allTrade[index].commissionAsset === purchasedSymbol ||
+                    e.allTrade[index].commissionAsset === "BNB"
+                  ) {
                     if (totalSold > 0) {
                       totalSold = totalSold - parseFloat(e.allTrade[index].qty);
                     } else {
@@ -193,7 +275,7 @@ const AccountSummary = () => {
     callAccountBalance();
     callOpenOrders();
     callWatchlist();
-    callKlineData();
+    // callKlineData();
     setUpdate(new Date().toLocaleString("en-US", { timeZone: "EST" }));
   };
   return (

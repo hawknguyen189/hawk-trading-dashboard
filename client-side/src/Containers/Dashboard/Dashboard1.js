@@ -24,23 +24,23 @@ const Dashboard1 = () => {
   const { coin, setCoin } = useContext(CoinContext);
   const { bot, setBot, pause, setPause } = useContext(BotContext);
 
-  useEffect(() => {
-    if (isMountedRef.current) {
-      // calling a function from BinanceContext using react useCallback
-      callKlineData();
-      let interval;
-      if (runInterval) {
-        interval = setInterval(() => {
-          callKlineData();
-        }, 10000);
-        return () => clearInterval(interval);
-      } else {
-        if (interval) {
-          clearInterval(interval);
-        }
-      }
-    }
-  }, [watchlist, isMountedRef, runInterval]);
+  // useEffect(() => {
+  //   if (isMountedRef.current) {
+  //     // calling a function from BinanceContext using react useCallback
+  //     callKlineData();
+  //     let interval;
+  //     if (runInterval) {
+  //       interval = setInterval(() => {
+  //         callKlineData();
+  //       }, 10000);
+  //       return () => clearInterval(interval);
+  //     } else {
+  //       if (interval) {
+  //         clearInterval(interval);
+  //       }
+  //     }
+  //   }
+  // }, [watchlist, isMountedRef, runInterval]);
 
   useEffect(() => {
     const placeOrder = async (symbol, action, botName) => {
