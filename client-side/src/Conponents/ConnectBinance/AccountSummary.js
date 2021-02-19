@@ -33,13 +33,13 @@ const AccountSummary = () => {
   );
   const [trailingStop, setTrailingStop] = useState({});
   const [trailingInterval, setTrailingInterval] = useState(); //need a state var to avoid getting reset every time we call func
-
   let totalBalance = 0;
-  //trailing stop function will first enter down & up rate that was pre-determined as 10 & 5
-  //at 1st, it will set stop price as -10% of purchase price
-  //if the market price go higher than 5%  it will re-adjust new stop price as -10% market price
-  //the stop loss will go up with the market price. BEST THING FOR THE BULL MARKET - Hawk
+
   const handleTrailing = (symbol, findIndex, balanceIndex) => {
+    //trailing stop function will first enter down & up rate that was pre-determined as 10 & 5
+    //at 1st, it will set stop price as -10% of purchase price
+    //if the market price go higher than 5%  it will re-adjust new stop price as -10% market price
+    //the stop loss will go up with the market price. BEST THING FOR THE BULL MARKET - Hawk
     const tempArr = [...purchasePrice];
     const boughtPrice = parseFloat(purchasePrice[findIndex]["price"]).toFixed(
       3
@@ -82,7 +82,8 @@ const AccountSummary = () => {
       // trailing stop is running & btn clicked so we stop it
       tempArr[findIndex]["runTrailing"] = false;
       tempArr[findIndex]["trailingPrice"] = 0;
-      clearInterval(trailingInterval); //clear calling check price interval
+      // console.log("clear timer", symbol);
+      clearInterval(trailingInterval[symbol]); //clear calling check price interval
 
       if (trailingStop[symbol]) {
         // delete asset from trailing stop list
@@ -92,18 +93,22 @@ const AccountSummary = () => {
       }
     } else {
       // trailing stop is not wokring => run it now
-      setTrailingInterval(
-        setInterval(() => {
+      setTrailingInterval((prev) => ({
+        ...prev,
+        [symbol]: setInterval(() => {
+          // console.log("timer", symbol);
           callCheckSingle(); //set timeInterval here to keep it running
-        }, 3500)
-      );
+        }, 3500),
+      }));
 
       tempArr[findIndex]["runTrailing"] = true;
     }
 
     setPurchasePrice(tempArr);
   };
+
   const controlTrailing = (symbol) => {
+    //func will be called when update on trailingStop
     const tempArr = [...purchasePrice];
     if (
       trailingStop[symbol].marketPrice >=
@@ -115,18 +120,22 @@ const AccountSummary = () => {
       ) {
         // only update new trailing price if the new one higher than prev one
         //aim to maximize profit on stop loss
-        tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] =
-          trailingStop[symbol].marketPrice * (1 - trailingDown / 100);
+        tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
+          trailingStop[symbol].marketPrice *
+          (1 - trailingDown / 100)
+        ).toFixed(3);
       }
     } else {
-      tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] =
-        trailingStop[symbol].boughtPrice * (1 - trailingDown / 100);
+      tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
+        trailingStop[symbol].boughtPrice *
+        (1 - trailingDown / 100)
+      ).toFixed(3);
     }
 
     // decide to sell at trailing stop price ?
     if (
       tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] >=
-      trailingStop[symbol].marketPrice
+      trailingStop[symbol]
     ) {
       callMarketSell({
         symbol: symbol,
