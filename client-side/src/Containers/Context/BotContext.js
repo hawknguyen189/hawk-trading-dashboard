@@ -51,7 +51,6 @@ const BotContextProvider = ({ children }) => {
           fund: 1000,
           offline: true,
           model: "WATCHDOG",
-          model: "SMLMA",
         },
       };
   const localHao = localStorage.getItem("bothao")

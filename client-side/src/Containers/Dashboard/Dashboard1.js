@@ -1,6 +1,4 @@
 import React, { useEffect, useContext } from "react";
-// import DrawingChartJS from "../Utils/DashboardDrawing/DrawingChartJS";
-// import Dashboard1Data from "./Data/Dashboard1Data";
 import AccountSummary from "../../Conponents/ConnectBinance/AccountSummary";
 import MainControl from "../../Conponents/ConnectBinance/MainControl";
 import MainSection from "../../Conponents/ConnectBinance/MainSection";
@@ -113,7 +111,7 @@ const Dashboard1 = () => {
           const botArray = Object.keys(bot);
           let assignedJob = {};
           botArray.forEach((e) => (assignedJob[e] = false));
-
+          // eslint-disable-next-line no-unused-vars
           const btcWatchDog = (async () => {
             //btc watchdog function will run automatiacally
             const btcMA = movingAverage.find((e) => e.symbol === "BTCUSDT");
@@ -159,7 +157,7 @@ const Dashboard1 = () => {
               }
             }
           })();
-
+          // eslint-disable-next-line no-unused-vars
           const ethWatchDog = (async () => {
             //btc watchdog function will run automatiacally
             const ethMA = movingAverage.find((e) => e.symbol === "ETHUSDT");
@@ -352,6 +350,7 @@ const Dashboard1 = () => {
     manageBot();
     // *****************************
     // end working on bot
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movingAverage]);
 
   return (

@@ -15,13 +15,9 @@ const BinanceContextProvider = ({ children }) => {
   const [runInterval, setRunInterval] = useState(false);
   const [trailingDown, setTrailingDown] = useState(10);
   const [trailingUp, setTrailingUp] = useState(5);
-  const {
-    watchlist,
-    setWatchlist,
-    movingAverage,
-    setMovingAverage,
-    setCoin,
-  } = useContext(CoinContext);
+  const { watchlist, setWatchlist, setMovingAverage, setCoin } = useContext(
+    CoinContext
+  );
   const { bot } = useContext(BotContext);
   const { setBalance, setOpenOrders } = useContext(UserAccount);
 
@@ -51,6 +47,7 @@ const BinanceContextProvider = ({ children }) => {
         console.log("calling kline/candlestick error ", e);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchlist]);
   // watchlist func call
   const callWatchlist = useCallback(async () => {
@@ -72,7 +69,6 @@ const BinanceContextProvider = ({ children }) => {
         const top10List = descListUSDT.slice(0, 10);
         //add check function to add holding pair in case out of top 10 vol
         if (bot) {
-          const holdingList = [];
           for (let property in bot) {
             if (bot[property].holding) {
               const getHoldingData = descListUSDT.find(
@@ -93,6 +89,7 @@ const BinanceContextProvider = ({ children }) => {
     } catch (e) {
       console.log("calling binnance error ", e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // call account summary func
   const callAccountBalance = useCallback(async () => {
@@ -124,6 +121,7 @@ const BinanceContextProvider = ({ children }) => {
     } catch (e) {
       console.log("calling account balance error ", e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // retrieve all open orders
   const callOpenOrders = useCallback(async () => {
@@ -144,6 +142,7 @@ const BinanceContextProvider = ({ children }) => {
     } catch (e) {
       console.log("calling account balance error ", e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const callCheckPrice = useCallback(async () => {
     // console.log("call check price")
@@ -167,6 +166,7 @@ const BinanceContextProvider = ({ children }) => {
     } catch (e) {
       console.log("calling check all price error ", e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const callMarketSell = useCallback(async (symbol) => {
     const endpoint = "callmarketsell";
@@ -205,6 +205,7 @@ const BinanceContextProvider = ({ children }) => {
       setTrailingUp,
       callMarketSell,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [runInterval, trailingDown, trailingUp]
   );
   return (

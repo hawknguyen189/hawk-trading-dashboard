@@ -35,7 +35,7 @@ const ControlPanel = ({ handleScan, whale, handleTransaction }) => {
                     <tr key={index}>
                       <td>{e.symbol}</td>
                       <td>{e.name}</td>
-                      <td scope="col" className="overflow-hidden">
+                      <td className="overflow-hidden">
                         <a
                           href={`https://etherscan.io/token/${e.address}`}
                           target="_blank"

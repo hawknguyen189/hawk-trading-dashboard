@@ -7,7 +7,7 @@ const Footer = () => {
         <b>Version</b> Beta 1.0.0
       </div>
       <strong>
-        Copyright &copy; 2020 <a href="http://adminlte.io">Hawk Family</a>.
+        Copyright &copy; 2020 <a href="/">Hawk Family</a>.
       </strong>{" "}
       All rights reserved.
     </footer>

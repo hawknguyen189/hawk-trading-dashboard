@@ -26,7 +26,7 @@ const AccountSummary = () => {
     new Date().toLocaleString("en-US", { timeZone: "EST" })
   );
   const [panicAsset, setPanicAsset] = useState("");
-  const [panicQty, setPanicQty] = useState(0);
+  const [panicQty, setPanicQty] = useState("");
   const [trailingStop, setTrailingStop] = useState({});
   const [trailingInterval, setTrailingInterval] = useState(); //need a state var to avoid getting reset every time we call func
   let totalBalance = 0;
@@ -154,6 +154,7 @@ const AccountSummary = () => {
         controlTrailing(property);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trailingStop]); //re-run when trailingStop state gets updated
 
   useEffect(() => {
@@ -174,6 +175,7 @@ const AccountSummary = () => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMountedRef, runInterval]);
   useEffect(() => {
     const callPurchasePrice = async () => {
@@ -273,6 +275,7 @@ const AccountSummary = () => {
       }
     };
     callPurchasePrice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMountedRef, balance]);
   const controlUpdate = (e) => {
     e.preventDefault();
@@ -341,10 +344,10 @@ const AccountSummary = () => {
                   Update
                 </button>
               </div>
-              <div className="col-sm-6">
+              <div className="col-sm-7">
                 <div className="input-group mb-3">
                   <button
-                    className="btn btn-outline-secondary"
+                    className="btn btn-outline-danger"
                     type="button"
                     id="button-addon1"
                     onClick={controlPanicSell}
@@ -367,7 +370,7 @@ const AccountSummary = () => {
                     value={panicQty}
                   />
                   <a
-                    href="#"
+                    href="/"
                     className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary"
                     onClick={(e) => {
                       e.preventDefault();
@@ -386,7 +389,7 @@ const AccountSummary = () => {
                 </div>
               </div>
               <div className="col-sm">
-                <em>Lastest Update is: {update}</em>
+                <em>Lastest Update: {update}</em>
               </div>
             </div>
           </div>

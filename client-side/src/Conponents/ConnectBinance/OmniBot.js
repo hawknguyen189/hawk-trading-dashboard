@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { BotContext } from "../../Containers/Context/BotContext";
 
 const OmniBot = ({ botName, stylist }) => {
-  const { bot, setBot, pause } = useContext(BotContext);
+  const { bot, pause } = useContext(BotContext);
   const [botInfo, setBotInfo] = useState("");
   useEffect(() => {
     if (bot) {
@@ -12,6 +12,7 @@ const OmniBot = ({ botName, stylist }) => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bot]);
   return (
     <div className="col-lg-3 col-6">
@@ -30,11 +31,7 @@ const OmniBot = ({ botName, stylist }) => {
                   ? `Bot Holding:  ${botInfo.holding}  @${botInfo.initialPrice}`
                   : ""}
               </p>
-              <p>
-                {pause
-                  ? "Paused All Bots"
-                  : "All working well"}
-              </p>
+              <p>{pause ? "Paused All Bots" : "All working well"}</p>
             </div>
           )}
         </div>

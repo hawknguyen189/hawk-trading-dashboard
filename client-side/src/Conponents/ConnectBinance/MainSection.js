@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import { CoinContext } from "../../Containers/Context/CoinContext";
 import "../../Containers/Utils/style.scss";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
@@ -6,7 +6,7 @@ import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { BotContext } from "../../Containers/Context/BotContext";
 
 const MainSection = () => {
-  const { watchlist, setWatchlist } = useContext(CoinContext);
+  const { watchlist } = useContext(CoinContext);
   const { bot } = useContext(BotContext);
   const { runInterval, callWatchlist } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
@@ -28,6 +28,7 @@ const MainSection = () => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bot, isMountedRef, runInterval]);
 
   return (
@@ -90,7 +91,8 @@ const MainSection = () => {
                       >
                         {new Intl.NumberFormat("en-US").format(
                           e.priceChangePercent
-                        )}%
+                        )}
+                        %
                       </td>
                       <td>
                         {new Intl.NumberFormat("en-US", {
@@ -168,11 +170,6 @@ const MainSection = () => {
                 </span>
               </div>
               {/* /.direct-chat-infos */}
-              <img
-                className="direct-chat-img"
-                src="dist/img/user1-128x128.jpg"
-                alt="message user"
-              />
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">
                 Is this template really for free? That's unbelievable!
@@ -191,11 +188,6 @@ const MainSection = () => {
                 </span>
               </div>
               {/* /.direct-chat-infos */}
-              <img
-                className="direct-chat-img"
-                src="dist/img/user3-128x128.jpg"
-                alt="message user"
-              />
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">You better believe it!</div>
               {/* /.direct-chat-text */}
@@ -212,11 +204,7 @@ const MainSection = () => {
                 </span>
               </div>
               {/* /.direct-chat-infos */}
-              <img
-                className="direct-chat-img"
-                src="dist/img/user1-128x128.jpg"
-                alt="message user"
-              />
+
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">
                 Working with AdminLTE on a great new app! Wanna join?
@@ -235,11 +223,7 @@ const MainSection = () => {
                 </span>
               </div>
               {/* /.direct-chat-infos */}
-              <img
-                className="direct-chat-img"
-                src="dist/img/user3-128x128.jpg"
-                alt="message user"
-              />
+
               {/* /.direct-chat-img */}
               <div className="direct-chat-text">I would love to.</div>
               {/* /.direct-chat-text */}
@@ -252,11 +236,6 @@ const MainSection = () => {
             <ul className="contacts-list">
               <li>
                 <a href="/">
-                  <img
-                    className="contacts-list-img"
-                    src="dist/img/user1-128x128.jpg"
-                    alt="contact"
-                  />
                   <div className="contacts-list-info">
                     <span className="contacts-list-name">
                       Count Dracula
@@ -274,11 +253,6 @@ const MainSection = () => {
               {/* End Contact Item */}
               <li>
                 <a href="/">
-                  <img
-                    className="contacts-list-img"
-                    alt="contact"
-                    src="dist/img/user7-128x128.jpg"
-                  />
                   <div className="contacts-list-info">
                     <span className="contacts-list-name">
                       Sarah Doe
@@ -296,11 +270,6 @@ const MainSection = () => {
               {/* End Contact Item */}
               <li>
                 <a href="/">
-                  <img
-                    className="contacts-list-img"
-                    alt="contact"
-                    src="dist/img/user3-128x128.jpg"
-                  />
                   <div className="contacts-list-info">
                     <span className="contacts-list-name">
                       Nadia Jolie
@@ -318,11 +287,6 @@ const MainSection = () => {
               {/* End Contact Item */}
               <li>
                 <a href="/">
-                  <img
-                    className="contacts-list-img"
-                    alt="contact"
-                    src="dist/img/user5-128x128.jpg"
-                  />
                   <div className="contacts-list-info">
                     <span className="contacts-list-name">
                       Nora S. Vans
@@ -340,11 +304,6 @@ const MainSection = () => {
               {/* End Contact Item */}
               <li>
                 <a href="/">
-                  <img
-                    className="contacts-list-img"
-                    alt="contact"
-                    src="dist/img/user6-128x128.jpg"
-                  />
                   <div className="contacts-list-info">
                     <span className="contacts-list-name">
                       John K.
@@ -362,11 +321,6 @@ const MainSection = () => {
               {/* End Contact Item */}
               <li>
                 <a href="/">
-                  <img
-                    className="contacts-list-img"
-                    alt="contact"
-                    src="dist/img/user8-128x128.jpg"
-                  />
                   <div className="contacts-list-info">
                     <span className="contacts-list-name">
                       Kenneth M.

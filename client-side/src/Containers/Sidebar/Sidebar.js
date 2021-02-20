@@ -23,7 +23,7 @@ const Sidebar = () => {
             <img
               src={require("../../dist/img/admin.jpg")}
               className="img-circle elevation-2"
-              alt="User Image"
+              alt="User"
             />
           </div>
           <div className="info">
