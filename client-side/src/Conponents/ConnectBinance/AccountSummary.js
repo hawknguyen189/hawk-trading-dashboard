@@ -288,7 +288,7 @@ const AccountSummary = () => {
   };
   const controlPanicSell = (e) => {
     e.preventDefault();
-    if (panicAsset && panicQty) {
+    if (panicAsset && panicQty && panicAsset !== "Asset?") {
       if (
         window.confirm(
           `Are you sure you want to market sell ${panicQty} ${panicAsset}?`
@@ -354,13 +354,21 @@ const AccountSummary = () => {
                   >
                     Panic Sell
                   </button>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="ETHUP"
-                    aria-label="pair"
+                  <select
+                    className="form-select"
+                    aria-label="select asset"
                     onChange={(e) => setPanicAsset(e.target.value)}
-                  />
+                  >
+                    <option defaultValue>Asset?</option>
+                    {balance.length &&
+                      balance.map((e, index) => {
+                        return (
+                          <option value={e.symbol} key={index}>
+                            {e.symbol}
+                          </option>
+                        );
+                      })}
+                  </select>
                   <input
                     type="number"
                     className="form-control"
