@@ -106,32 +106,10 @@ const AccountSummary = () => {
   const controlTrailing = (symbol) => {
     //func will be called when update on trailingStop
     const tempArr = [...purchasePrice];
-    if (
-      trailingStop[symbol].marketPrice >=
-      trailingStop[symbol].boughtPrice * (1 + trailingUp / 100)
-    ) {
-      if (
-        tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] <
-        trailingStop[symbol].marketPrice * (1 - trailingDown / 100)
-      ) {
-        // only update new trailing price if the new one higher than prev one
-        //aim to maximize profit on stop loss
-        tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
-          trailingStop[symbol].marketPrice *
-          (1 - trailingDown / 100)
-        ).toFixed(5);
-      }
-    } else {
-      tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
-        trailingStop[symbol].boughtPrice *
-        (1 - trailingDown / 100)
-      ).toFixed(5);
-    }
-
     // decide to sell at trailing stop price ?
     if (
       tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] >=
-      trailingStop[symbol]
+      trailingStop[symbol].marketPrice
     ) {
       callMarketSell({
         symbol: symbol,
@@ -141,6 +119,31 @@ const AccountSummary = () => {
           ) / 100 //floor will round to the lowest integer
         ),
       });
+      clearInterval(trailingInterval[symbol]); //clear calling check price interval
+      tempArr[trailingStop[symbol].purchasePriceIndex]["runTrailing"] = false;
+      tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = 0;
+    } else {
+      if (
+        trailingStop[symbol].marketPrice >=
+        trailingStop[symbol].boughtPrice * (1 + trailingUp / 100)
+      ) {
+        if (
+          tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] <
+          trailingStop[symbol].marketPrice * (1 - trailingDown / 100)
+        ) {
+          // only update new trailing price if the new one higher than prev one
+          //aim to maximize profit on stop loss
+          tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
+            trailingStop[symbol].marketPrice *
+            (1 - trailingDown / 100)
+          ).toFixed(5);
+        }
+      } else {
+        tempArr[trailingStop[symbol].purchasePriceIndex]["trailingPrice"] = (
+          trailingStop[symbol].boughtPrice *
+          (1 - trailingDown / 100)
+        ).toFixed(5);
+      }
     }
 
     // update purchasePrice context

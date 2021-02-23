@@ -104,8 +104,8 @@ const BinanceContextProvider = ({ children }) => {
         const jsonResponse = await response.json();
         // const resultParse = JSON.parse(jsonResponse);
         let mainBalance = [];
+        console.log("balance", jsonResponse);
         for (let property in jsonResponse) {
-          // console.log(parseInt(jsonResponse[property]["onOrder"]));
           if (
             parseInt(jsonResponse[property]["available"]) > 0 ||
             parseInt(jsonResponse[property]["onOrder"]) > 0
