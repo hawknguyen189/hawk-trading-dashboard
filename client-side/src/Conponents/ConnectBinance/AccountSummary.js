@@ -432,12 +432,12 @@ const AccountSummary = () => {
                   if (e.symbol.toUpperCase() === "USDT") {
                     totalBalance =
                       totalBalance +
-                      (parseInt(e.available) + parseInt(e.onOrder));
+                      (parseFloat(e.available) + parseFloat(e.onOrder));
                   } else {
                     totalBalance =
                       totalBalance +
                       coin[`${e.symbol}USDT`] *
-                        (parseInt(e.available) + parseInt(e.onOrder));
+                        (parseFloat(e.available) + parseFloat(e.onOrder));
                   }
 
                   return (
@@ -456,14 +456,15 @@ const AccountSummary = () => {
                               style: "currency",
                               currency: "USD",
                             }).format(
-                              parseInt(e.available) + parseInt(e.onOrder)
+                              parseFloat(e.available) + parseFloat(e.onOrder)
                             )
                           : new Intl.NumberFormat("en-US", {
                               style: "currency",
                               currency: "USD",
                             }).format(
                               coin[`${e.symbol}USDT`] *
-                                (parseInt(e.available) + parseInt(e.onOrder))
+                                (parseFloat(e.available) +
+                                  parseFloat(e.onOrder))
                             )}
                       </td>
                       <td>
