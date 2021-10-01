@@ -15,9 +15,8 @@ const BinanceContextProvider = ({ children }) => {
   const [runInterval, setRunInterval] = useState(false);
   const [trailingDown, setTrailingDown] = useState(10);
   const [trailingUp, setTrailingUp] = useState(5);
-  const { watchlist, setWatchlist, setMovingAverage, setCoin } = useContext(
-    CoinContext
-  );
+  const { watchlist, setWatchlist, setMovingAverage, setCoin } =
+    useContext(CoinContext);
   const { bot } = useContext(BotContext);
   const { setBalance, setOpenOrders } = useContext(UserAccount);
 
@@ -54,11 +53,11 @@ const BinanceContextProvider = ({ children }) => {
     console.log("inside watchlist call");
     const endpoint = "callwatchlist";
     try {
-      let response = await fetch(`/binance/${endpoint}`);
-
+      let response = await fetch(`http://localhost:3001/binance/${endpoint}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
+        console.log("watchlist foo bar", response);
         const jsonResponse = await response.json();
         const listUSDT = jsonResponse.filter((e) =>
           e.symbol.includes("USDT", 1)
@@ -149,11 +148,11 @@ const BinanceContextProvider = ({ children }) => {
     const endpoint = "callcheckprice";
     try {
       let response = await fetch(`/binance/${endpoint}`);
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
         const jsonResponse = await response.json();
+
         // const resultParse = JSON.parse(jsonResponse);
         // let allPrice = [];
         // for (let property in jsonResponse) {

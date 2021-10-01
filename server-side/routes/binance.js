@@ -11,6 +11,7 @@ const binance = new Binance().options({
   useServerTime: true,
 });
 /* GET home page. */
+console.log("binance");
 router.get("/callaccountbalance", (req, res, next) => {
   const checkAccountBalance = async () => {
     await binance.useServerTime();
@@ -93,6 +94,7 @@ router.get("/callwatchlist", (req, res, next) => {
 router.get("/callcheckprice", (req, res, next) => {
   const checkPrice = async () => {
     let ticker = await binance.prices();
+    console.log("ticker", ticker);
     res.json(ticker);
   };
   checkPrice();

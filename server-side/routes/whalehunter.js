@@ -3,7 +3,7 @@ var router = express.Router();
 const axios = require("axios");
 const dotenv = require("dotenv");
 dotenv.config();
-const api = require("etherscan-api").init(process.env.ETHERSCAN_API);
+// const api = require("etherscan-api").init(process.env.ETHERSCAN_API);
 const { getFormattedTokenBalance } = require("../utils/HelpfulFunction");
 /* GET home page. */
 router.get("/balance", function (req, res, next) {

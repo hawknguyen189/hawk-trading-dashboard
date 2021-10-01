@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   return (
@@ -8,12 +8,14 @@ const Sidebar = () => {
       {/* Brand Logo */}
       <a href="../../index3.html" className="brand-link">
         <img
-          src={require("../../dist/img/AdminLTELogo.png")}
+          src={require("../../dist/img/AdminLTELogo.png").default}
           alt="AdminLTE Logo"
           className="brand-image img-circle elevation-3"
           style={{ opacity: ".8" }}
         />
-        <span className="brand-text font-weight-light">Hawk Trading Dashboard</span>
+        <span className="brand-text font-weight-light">
+          Hawk Trading Dashboard
+        </span>
       </a>
       {/* Sidebar */}
       <div className="sidebar">
@@ -21,7 +23,7 @@ const Sidebar = () => {
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
           <div className="image">
             <img
-              src={require("../../dist/img/admin.jpg")}
+              src={require("../../dist/img/admin.jpg").default}
               className="img-circle elevation-2"
               alt="User"
             />
