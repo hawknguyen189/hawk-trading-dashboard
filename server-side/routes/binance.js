@@ -35,7 +35,7 @@ router.post("/callmarketsell", (req, res, next) => {
   const quantity = req.body.qty;
   const callMarketSell = async () => {
     await binance.marketSell(symbol, quantity, (error, response) => {
-      console.log(response);
+      // console.log(response);
       res.json(response);
     });
   };
@@ -94,7 +94,7 @@ router.get("/callwatchlist", (req, res, next) => {
 router.get("/callcheckprice", (req, res, next) => {
   const checkPrice = async () => {
     let ticker = await binance.prices();
-    console.log("ticker", ticker);
+    // console.log("ticker", ticker);
     res.json(ticker);
   };
   checkPrice();
