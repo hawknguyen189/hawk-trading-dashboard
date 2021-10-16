@@ -1,4 +1,13 @@
 var express = require("express");
+const { graphqlHTTP } = require("express-graphql");
+const {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLList,
+  GraphQLInt,
+  GraphQLNonNull,
+} = require("graphql");
 var router = express.Router();
 const Binance = require("node-binance-api");
 // setting up binance API

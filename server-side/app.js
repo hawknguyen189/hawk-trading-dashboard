@@ -7,6 +7,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var whaleRouter = require("./routes/whalehunter");
 var binanceRouter = require("./routes/binance");
+var graphqlRouter = require("./routes/graphql");
 let utilFunction = require("./utils/HelpfulFunction");
 var app = express();
 
@@ -28,6 +29,7 @@ app.use("/users", usersRouter);
 // app.use("/whalehunter", whaleRouter);
 
 app.use("/binance", binanceRouter);
+app.use("/graphql", graphqlRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -582,8 +582,8 @@ const AccountSummary = () => {
               </tr>
             </thead>
             <tbody>
-              {openOrders &&
-                openOrders.map((e, index) => {
+              {openOrders.length &&
+                openOrders?.map((e, index) => {
                   return (
                     <tr key={index}>
                       <td>
