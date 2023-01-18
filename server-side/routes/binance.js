@@ -10,6 +10,7 @@ const {
 } = require("graphql");
 var router = express.Router();
 const Binance = require("node-binance-api");
+const axios = require("axios");
 // setting up binance API
 // *****************************************
 const dotenv = require("dotenv");
@@ -98,6 +99,44 @@ router.get("/callwatchlist", (req, res, next) => {
     // console.info(response); // view all data
   };
   checkAllVolume();
+});
+router.post("/checkpositions", (req, res, next) => {
+  const getUserPosition = async () => {
+    try {
+      const BASE_API = "https://www.binance.com/bapi/futures/v1/";
+      const { data } = await axios.post(
+        BASE_API + "public/future/leaderboard/getOtherPosition",
+        {
+          encryptedUid: req.body.uid,
+          tradeType: "PERPETUAL",
+        }
+      );
+      res.json(data.data);
+    } catch (error) {
+      console.log(`checkPositions error: `, error);
+    }
+  };
+  getUserPosition();
+});
+router.get("/callleaderboard", (req, res, next) => {
+  console.log("here is the callleaderboard call");
+  const getUserPosition = async () => {
+    try {
+      const BASE_API =
+        "https://www.binance.com/bapi/futures/v3/public/future/leaderboard/getLeaderboardRank";
+      const { data } = await axios.post(BASE_API, {
+        tradeType: "PERPETUAL",
+        statisticsType: "PNL",
+        periodType: "WEEKLY",
+        isShared: true,
+        isTrader: false,
+      });
+      res.json(data);
+    } catch (error) {
+      console.log(`callleaderboard error: `, error);
+    }
+  };
+  getUserPosition();
 });
 
 router.get("/callcheckprice", (req, res, next) => {

@@ -15,7 +15,7 @@ const BinanceContextProvider = ({ children }) => {
   const [runInterval, setRunInterval] = useState(false);
   const [trailingDown, setTrailingDown] = useState(10);
   const [trailingUp, setTrailingUp] = useState(5);
-  const { watchlist, setWatchlist, setMovingAverage, setCoin } =
+  const { watchlist, setWatchlist, setMovingAverage, setCoin, setLeaderboard } =
     useContext(CoinContext);
   const { bot } = useContext(BotContext);
   const { setBalance, setOpenOrders } = useContext(UserAccount);
@@ -90,6 +90,29 @@ const BinanceContextProvider = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // topleaderboard func call
+  const callLeaderboard = useCallback(async () => {
+    console.log("inside leaderboard call");
+    const endpoint = "callleaderboard";
+    try {
+      let response = await fetch(`http://localhost:3001/binance/${endpoint}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const jsonResponse = await response.json();
+        // //sort leaderboard based on pnl
+        // const sortedLeaderboard = jsonResponse.data.sort(
+        //   (a, b) => b.pnl - a.pnl
+        // );
+        const topLeaderboard = jsonResponse.data.slice(0, 12);
+        console.log("leaderboard", topLeaderboard);
+        setLeaderboard(topLeaderboard);
+      }
+    } catch (e) {
+      console.log("calling binnance error ", e);
+    }
+  }, [setLeaderboard]);
+
   // call account summary func
   const callAccountBalance = useCallback(async () => {
     console.log("call account balance ");
@@ -203,6 +226,7 @@ const BinanceContextProvider = ({ children }) => {
       trailingUp,
       setTrailingUp,
       callMarketSell,
+      callLeaderboard,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [runInterval, trailingDown, trailingUp]

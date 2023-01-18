@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import AccountSummary from "../../Conponents/ConnectBinance/AccountSummary";
 import MainControl from "../../Conponents/ConnectBinance/MainControl";
-import MainSection from "../../Conponents/ConnectBinance/MainSection";
+import TopLeaderboard from "../../Conponents/ConnectBinance/TopLeaderboard";
 import OmniBot from "../../Conponents/ConnectBinance/OmniBot";
 // import BotController from "../../Conponents/ConnectBinance/BotController";
 import { CoinContext } from "../Context/CoinContext";
@@ -407,10 +407,10 @@ const Dashboard1 = () => {
           {/* Main row */}
           <div className="row">
             {/* Left col */}
-            <MainSection></MainSection>
+            <TopLeaderboard></TopLeaderboard>
             {/* /.Left col */}
             {/* right col (We are only adding the ID to make the widgets sortable)*/}
-            <AccountSummary></AccountSummary>
+            {/* <AccountSummary></AccountSummary> */}
             {/* right col */}
           </div>
           {/* /.row (main row) */}

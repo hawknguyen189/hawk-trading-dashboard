@@ -9,6 +9,7 @@ router.use(
   graphqlHTTP({
     graphiql: true,
     schema: schema,
+    rootValue: { hello: () => "hello world" },
   })
 );
 

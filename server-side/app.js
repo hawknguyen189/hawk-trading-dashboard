@@ -10,6 +10,8 @@ var binanceRouter = require("./routes/binance");
 var graphqlRouter = require("./routes/graphql");
 let utilFunction = require("./utils/HelpfulFunction");
 var app = express();
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 // body-parser to parse parameters sent by the frontend, and cors to allow requests coming from another server or a different port of the same server.
 const cors = require("cors");
@@ -30,7 +32,17 @@ app.use("/users", usersRouter);
 
 app.use("/binance", binanceRouter);
 app.use("/graphql", graphqlRouter);
-
+app.get("/foobar", (req, res, next) => {
+  const checkFooBar = async () => {
+    const response = await fetch(
+      "https://be.blackeyegalaxy.space/v1/get-available-asteroids?source=141&spaceship=2061&sourcetype=0"
+    );
+    // console.log("respone", response);
+    console.log("respone", await response.json());
+    res.json(checkFooBar);
+  };
+  checkFooBar();
+});
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
