@@ -16,24 +16,24 @@ const TopLeaderboard = () => {
     if (isMountedRef.current) {
       // calling a function from BinanceContext using react useCallback
       callLeaderboard();
-      let interval;
-      if (runInterval) {
-        interval = setInterval(() => {
-          console.log("calling watchlist inside interval");
-          callLeaderboard();
-        }, 900000);
-        return () => clearInterval(interval);
-      } else {
-        if (interval) {
-          clearInterval(interval);
-        }
-      }
+      //   let interval;
+      //   if (runInterval) {
+      //     interval = setInterval(() => {
+      //       console.log("calling watchlist inside interval");
+      //       callLeaderboard();
+      //     }, 900000);
+      //     return () => clearInterval(interval);
+      //   } else {
+      //     if (interval) {
+      //       clearInterval(interval);
+      //     }
+      //   }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bot, isMountedRef, runInterval]);
 
   return (
-    <section className="col-lg-6 connectedSortable">
+    <section className="col-lg connectedSortable">
       {/* Custom tabs (Charts with tabs)*/}
       <div className="card">
         <div className="card-header">
@@ -72,6 +72,7 @@ const TopLeaderboard = () => {
                   roi={e.roi}
                   rank={e.rank}
                   nickname={e.nickName}
+                  index={index}
                 ></UserPosition>
               );
             })}

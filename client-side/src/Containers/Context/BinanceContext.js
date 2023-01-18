@@ -105,6 +105,20 @@ const BinanceContextProvider = ({ children }) => {
         //   (a, b) => b.pnl - a.pnl
         // );
         const topLeaderboard = jsonResponse.data.slice(0, 12);
+        topLeaderboard.unshift(
+          {
+            encryptedUid: "DF74DFB6CB244F8033F1D66D5AA0B171",
+            nickName: "TreeOfAlpha2",
+          },
+          {
+            encryptedUid: "FB23E1A8B7E2944FAAEC6219BBDF8243",
+            nickName: "TreeOfAlpha1",
+          },
+          {
+            encryptedUid: "DA4449E038BFE409FE83720C9340C2BC",
+            nickName: "Anonymous User-4b7678",
+          }
+        );
         console.log("leaderboard", topLeaderboard);
         setLeaderboard(topLeaderboard);
       }

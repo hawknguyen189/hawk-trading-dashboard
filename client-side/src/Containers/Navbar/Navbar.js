@@ -2,7 +2,6 @@ import React from "react";
 import {Link} from "react-router-dom";
 
 const Navbar = ({match}) => {
-  console.log(match);
   return (
     //   navbar
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
