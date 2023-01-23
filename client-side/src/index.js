@@ -5,21 +5,24 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import BinanceContextProvider from "./Containers/Context/BinanceContext";
 import CoinContextProvider from "./Containers/Context/CoinContext";
+import LeaderboardContextProvider from "./Containers/Context/LeaderboardContext";
 import BotContextProvider from "./Containers/Context/BotContext";
 import UserAccountProvider from "./Containers/Context/UserAccount";
 import WhaleContextContext from "./Containers/Context/WhaleContext";
 
 ReactDOM.render(
   <UserAccountProvider>
-    <CoinContextProvider>
-      <BotContextProvider>
-        <BinanceContextProvider>
-          <WhaleContextContext>
-            <App />
-          </WhaleContextContext>
-        </BinanceContextProvider>
-      </BotContextProvider>
-    </CoinContextProvider>
+    <LeaderboardContextProvider>
+      <CoinContextProvider>
+        <BotContextProvider>
+          <BinanceContextProvider>
+            <WhaleContextContext>
+              <App />
+            </WhaleContextContext>
+          </BinanceContextProvider>
+        </BotContextProvider>
+      </CoinContextProvider>
+    </LeaderboardContextProvider>
   </UserAccountProvider>,
   document.getElementById("root")
 );

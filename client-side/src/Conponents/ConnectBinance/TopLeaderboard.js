@@ -4,10 +4,12 @@ import "../../Containers/Utils/style.scss";
 import { useIsMountedRef } from "../../Containers/Utils/CustomHook";
 import { BinanceContext } from "../../Containers/Context/BinanceContext";
 import { BotContext } from "../../Containers/Context/BotContext";
+import { LeaderboardContext } from "../../Containers/Context/LeaderboardContext";
 import UserPosition from "./UserPosition";
 
 const TopLeaderboard = () => {
   const { leaderboard } = useContext(CoinContext);
+  const { updateAllPositions } = useContext(LeaderboardContext);
   const { bot } = useContext(BotContext);
   const { runInterval, callLeaderboard } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
@@ -32,7 +34,7 @@ const TopLeaderboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bot, isMountedRef, runInterval]);
   const handleUpdate = (e) => {
-    callLeaderboard();
+    updateAllPositions(leaderboard);
   };
 
   return (
