@@ -21,7 +21,7 @@ const TopLeaderboard = () => {
       //     interval = setInterval(() => {
       //       console.log("calling watchlist inside interval");
       //       callLeaderboard();
-      //     }, 900000);
+      //     }, 600000);
       //     return () => clearInterval(interval);
       //   } else {
       //     if (interval) {
@@ -31,6 +31,9 @@ const TopLeaderboard = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bot, isMountedRef, runInterval]);
+  const handleUpdate = (e) => {
+    callLeaderboard();
+  };
 
   return (
     <section className="col-lg connectedSortable">
@@ -39,10 +42,13 @@ const TopLeaderboard = () => {
         <div className="card-header">
           <h3 className="card-title">
             <i className="fas fa-chart-pie mr-1" />
-            Binance Top 12 Leaderboard
+            <span>Binance Top 12 Leaderboard</span>
+            <button className="btn btn-success" onClick={handleUpdate}>
+              <i className="fa fa-repeat" aria-hidden="true"></i>
+            </button>
           </h3>
           <div className="card-tools">
-            <ul className="nav nav-pills ml-auto">
+            {/* <ul className="nav nav-pills ml-auto">
               <li className="nav-item">
                 <a
                   className="nav-link active"
@@ -57,7 +63,7 @@ const TopLeaderboard = () => {
                   BTC
                 </a>
               </li>
-            </ul>
+            </ul> */}
           </div>
         </div>
         {/* /.card-header */}
