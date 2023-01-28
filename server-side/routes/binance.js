@@ -111,6 +111,9 @@ router.post("/checkpositions", (req, res, next) => {
           tradeType: "PERPETUAL",
         }
       );
+      if (!Array.isArray(data.data.otherPositionRetList)) {
+        data.data.otherPositionRetList = [];
+      }
       res.json(data.data);
     } catch (error) {
       console.log(`checkPositions error: `, error);

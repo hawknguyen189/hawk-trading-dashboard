@@ -21,9 +21,10 @@ const LeaderboardContextProvider = ({ children }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
         const jsonResponse = await response.json();
-        const positionArr = [...jsonResponse.otherPositionRetList];
+        let positionArr = [];
+        positionArr = [...jsonResponse.otherPositionRetList];
         let sum = 0;
-        if (jsonResponse.otherPositionRetList) {
+        if (Array.isArray(jsonResponse.otherPositionRetList)) {
           jsonResponse.otherPositionRetList.forEach((e) => {
             sum = e.pnl + sum;
           });
@@ -39,9 +40,9 @@ const LeaderboardContextProvider = ({ children }) => {
     async (uid) => {
       let positionsArr = [];
       let sumPNL = 0;
-      const result = callCheckPosition(uid);
-      positionsArr = [...(await result).positionsArr];
-      sumPNL = (await result).sumPNL;
+      const result = await callCheckPosition(uid);
+      positionsArr = [...result.positionsArr];
+      sumPNL = result.sumPNL;
       setCurrentPosition((prevState) => {
         return {
           ...prevState,

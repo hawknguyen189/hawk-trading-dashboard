@@ -52,7 +52,8 @@ const UserPosition = ({ uid, pnl, roi, rank, nickname, index }) => {
                     style: "currency",
                     currency: "USD",
                   }).format(currentPosition[uid]?.sumPNL)}
-                </span>
+                </span>{" "}
+                <span>({currentPosition[uid]?.positions.length})</span>
                 <button
                   className="btn btn-primary ml-2"
                   type="button"
