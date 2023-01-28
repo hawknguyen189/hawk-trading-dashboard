@@ -9,7 +9,7 @@ const UserPosition = ({ uid, pnl, roi, rank, nickname, index }) => {
   const { leaderboard, setLeaderboard } = useContext(CoinContext);
   const { checkPosition, currentPosition } = useContext(LeaderboardContext);
   const [sumPNL, setSumPNL] = useState(0);
-
+  const date = new Date(1666632563517);
   useEffect(() => {
     checkPosition(uid);
   }, [uid, isMountedRef, index, setLeaderboard, checkPosition]);
@@ -77,6 +77,7 @@ const UserPosition = ({ uid, pnl, roi, rank, nickname, index }) => {
                         <th scope="col">Market Price</th>
                         <th scope="col">PNL/ROI</th>
                         <th scope="col">Leverage</th>
+                        <th scope="col">Time</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -91,6 +92,11 @@ const UserPosition = ({ uid, pnl, roi, rank, nickname, index }) => {
                                 {new Intl.NumberFormat("en-US").format(
                                   e.amount
                                 )}
+                                /
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                }).format(e.entryPrice * e.amount)}
                               </td>
                               <td>
                                 {new Intl.NumberFormat("en-US", {
@@ -105,7 +111,11 @@ const UserPosition = ({ uid, pnl, roi, rank, nickname, index }) => {
                                 }).format(e.markPrice)}
                               </td>
                               <td className={e.pnl > 0 ? "bullish" : "bearish"}>
-                                {new Intl.NumberFormat("en-US").format(e.pnl)}/
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                }).format(e.pnl)}
+                                /
                                 {new Intl.NumberFormat("en-US").format(
                                   e.roe * 100
                                 )}
@@ -116,6 +126,9 @@ const UserPosition = ({ uid, pnl, roi, rank, nickname, index }) => {
                                   e.leverage
                                 )}
                                 x
+                              </td>
+                              <td>
+                                {new Date(e.updateTimeStamp).toLocaleString()}
                               </td>
                             </tr>
                           );
