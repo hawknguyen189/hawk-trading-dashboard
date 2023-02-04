@@ -7,6 +7,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var whaleRouter = require("./routes/whalehunter");
 var binanceRouter = require("./routes/binance");
+var cmeReportRouter = require("./routes/cmereport");
 var graphqlRouter = require("./routes/graphql");
 let utilFunction = require("./utils/HelpfulFunction");
 var app = express();
@@ -31,6 +32,7 @@ app.use("/users", usersRouter);
 // app.use("/whalehunter", whaleRouter);
 
 app.use("/binance", binanceRouter);
+app.use("/cmereport", cmeReportRouter);
 app.use("/graphql", graphqlRouter);
 app.get("/foobar", (req, res, next) => {
   const checkFooBar = async () => {

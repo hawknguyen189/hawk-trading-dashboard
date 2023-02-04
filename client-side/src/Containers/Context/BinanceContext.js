@@ -115,8 +115,16 @@ const BinanceContextProvider = ({ children }) => {
             nickName: "TreeOfAlpha1",
           },
           {
-            encryptedUid: "DA4449E038BFE409FE83720C9340C2BC",
-            nickName: "Anonymous User-4b7678",
+            encryptedUid: "3BAFAFCA68AB85929DF777C316F18C54",
+            nickName: "Anonymous User-c1d8018",
+          },
+          {
+            encryptedUid: "0A927BE36D0CC5011A99501232781AFA",
+            nickName: "constant4",
+          },
+          {
+            encryptedUid: "FE63D6040E22611D978B73064B3A2057",
+            nickName: "constant1",
           }
         );
         console.log("leaderboard", topLeaderboard);

@@ -9,7 +9,8 @@ import UserPosition from "./UserPosition";
 
 const TopLeaderboard = () => {
   const { leaderboard } = useContext(CoinContext);
-  const { updateAllPositions } = useContext(LeaderboardContext);
+  const { updateAllPositions, callCMEReport, CMEReport } =
+    useContext(LeaderboardContext);
   const { bot } = useContext(BotContext);
   const { runInterval, callLeaderboard } = useContext(BinanceContext);
   const isMountedRef = useIsMountedRef();
@@ -18,6 +19,7 @@ const TopLeaderboard = () => {
     if (isMountedRef.current) {
       // calling a function from BinanceContext using react useCallback
       callLeaderboard();
+      callCMEReport();
       //   let interval;
       //   if (runInterval) {
       //     interval = setInterval(() => {
@@ -45,6 +47,10 @@ const TopLeaderboard = () => {
           <h3 className="card-title">
             <i className="fas fa-chart-pie mr-1" />
             <span>Binance Top 12 Leaderboard</span>
+            <span>Latest CME date:</span>{" "}
+            <span className="fw-bold">{CMEReport.date}</span>{" "}
+            <span className="text-success fw-bold">{CMEReport.long}</span>{" "}
+            <span className="text-danger fw-bold">{CMEReport.short}</span>{" "}
             <button className="btn btn-success" onClick={handleUpdate}>
               <i className="fa fa-repeat" aria-hidden="true"></i>
             </button>

@@ -8,8 +8,6 @@ const UserPosition = ({ uid, pnl, roi, rank, nickname, index }) => {
   const isMountedRef = useIsMountedRef();
   const { leaderboard, setLeaderboard } = useContext(CoinContext);
   const { checkPosition, currentPosition } = useContext(LeaderboardContext);
-  const [sumPNL, setSumPNL] = useState(0);
-  const date = new Date(1666632563517);
   useEffect(() => {
     checkPosition(uid);
   }, [uid, isMountedRef, index, setLeaderboard, checkPosition]);
